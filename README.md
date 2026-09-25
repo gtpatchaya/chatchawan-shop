@@ -1,157 +1,59 @@
-<h1 align=center>Astrofront | AstroJs + Shopify + Tailwind CSS + TypeScript Starter and Boilerplate</h1>
+# ร้านชัชวาลเชียงกง - เว็บขายอะไหล่มือสอง
 
-<p align=center>A free, production-ready astro.js template powered by Tailwind CSS and TypeScript, specifically designed for Shopify. Utilizes the Shopify Storefront API through GraphQL and providing everything you need to jumpstart your Astro project and save valuable time.</p>
+เว็บไซต์หน้าร้าน + ระบบหลังบ้าน สร้างด้วย **Express** และ **Supabase** (ฐานข้อมูล + เก็บรูป)
 
-<p align=center>Made with ♥ by <a href="https://themefisher.com/">Themefisher</a></p>
-<p align=center> If you find this project useful, please give it a ⭐ to show your support. </p>
+## ความสามารถ
 
-<h2 align="center"> <a target="_blank" href="https://astrofront.vercel.app/" rel="nofollow">👀 Demo</a> | <a  target="_blank" href="https://pagespeed.web.dev/analysis/https-astrofront-vercel-app/qs3wscwqpq?form_factor=desktop">Page Speed (99%)🚀</a>
-</h2>
+**หน้าร้าน**
+- หน้าแรก: ค้นหา, หมวดหมู่, สินค้าแนะนำ (เลื่อนแนวนอน), สินค้าเข้าใหม่ที่โหลดเพิ่มเองอัตโนมัติเมื่อเลื่อนลง
+- หน้ารายการสินค้า: กรองตามหมวดหมู่ ค้นหา และเรียงตามราคา
+- หน้ารายละเอียด: แกลเลอรีรูป (ปัดได้บนมือถือ), ราคา, ส่วนลดเทียบของใหม่, สภาพ, สเปก, ปุ่มโทร / LINE และแถบติดต่อด้านล่างบนมือถือ
+- ใช้ไอคอน SVG ทั้งหมด ไม่มีอีโมจิ รองรับมือถือเต็มรูปแบบ
 
-<p align=center>
+**หลังบ้าน** (`/admin`)
+- เข้าสู่ระบบด้วยรหัสผ่าน (จำกัดการเดารหัส 5 ครั้ง / 15 นาที)
+- เพิ่ม / แก้ไข / ลบสินค้า
+- อัปโหลดหลายรูปพร้อมกัน (ลากวางได้) ระบบย่อรูปและแปลงเป็น WebP ให้อัตโนมัติ
+- ตั้งรูปปก, ลบรูป
+- เปลี่ยนสถานะ พร้อมขาย / ติดจอง / ขายแล้ว ได้จากหน้ารายการทันที
+- ซ่อนสินค้า, ปักหมุดเป็นสินค้าแนะนำ, จัดการหมวดหมู่
 
- <a href="https://github.com/withastro/astro/releases/tag/astro@4.16.8" alt="Contributors">
-    <img src="https://img.shields.io/static/v1?label=ASTRO&message=4.16&color=BC52EE&logo=astro" />
-</a>
+## วิธีติดตั้ง
 
-  <a href="https://github.com/themefisher/astrofront/blob/main/LICENSE">
-    <img src="https://img.shields.io/github/license/themefisher/astrofront" alt="license"></a>
+1. **สร้างโปรเจกต์ Supabase** ที่ https://supabase.com
+2. เปิด **SQL Editor** แล้ววางเนื้อหาไฟล์ `supabase/schema.sql` กด Run
+   (จะสร้างตาราง, หมวดหมู่ตัวอย่าง และ storage bucket `product-images` ให้)
+3. คัดลอกไฟล์ตั้งค่า แล้วกรอกข้อมูล
+   ```bash
+   cp .env.example .env
+   ```
+   - `SUPABASE_URL` และ `SUPABASE_SERVICE_ROLE_KEY` ดูได้ที่ Project Settings > API
+   - `ADMIN_PASSWORD` รหัสผ่านเข้าหลังบ้าน
+   - `SESSION_SECRET` ข้อความสุ่มยาวๆ
+   - เบอร์โทร, LINE, ที่อยู่ร้าน, ลิงก์แผนที่
+4. ติดตั้งและรัน
+   ```bash
+   npm install
+   npm start        # หรือ npm run dev ระหว่างพัฒนา
+   ```
+5. เปิด http://localhost:3000 และเข้าหลังบ้านที่ http://localhost:3000/admin
 
-  <img src="https://img.shields.io/github/languages/code-size/themefisher/astrofront" alt="code size">
+> service role key ใช้เฉพาะบนเซิร์ฟเวอร์เท่านั้น ห้ามใส่ในโค้ดฝั่งเบราว์เซอร์หรือเผยแพร่
 
-  <a href="https://github.com/themefisher/astrofront/graphs/contributors">
-    <img src="https://img.shields.io/github/contributors/themefisher/astrofront" alt="contributors"></a>
-</p>
+## นำขึ้นใช้งานจริง
 
-## 📌 Key Features
+รันได้ทุกที่ที่รองรับ Node.js 18+ เช่น Render, Railway, Fly.io หรือ VPS
+ตั้ง `NODE_ENV=production` และใส่ค่าใน `.env` ทั้งหมดเป็น environment variables ของโฮสต์
 
-- 🌐 Dynamic Products from Shopify Storefront API
-- 💸 Checkout and Payments with Shopify
-- 🌞 Automatic Light/Dark Mode
-- 🚀 Fetching and Caching Paradigms
-- 🔗 Server Actions for Mutations
-- 🔐 User Authentication
-- 🧩 Similar Products Suggestions
-- 🔍 Search, Sort, Different Views Functionality
-- 🏷️ Tags & Categories & Vendors & Price Range & Product Variants Functionality
-- 🖼️ Single Product Image Zoom, Hover Effect, Slider
-- 🛒 Cart & Easy editing options for cart items
-- 📝 Product Description on Multiple Tabs
-- 🔗 Netlify Setting Pre-configured
-- 📞 Support Contact Form
-- 📱 Fully Responsive
-- 🔄 Dynamic Home Banner Slider
-- 📝 Write and Update Content in Markdown / MDX
-- ⌛ Infinite Product Load on Scrolling
+## โครงสร้าง
 
-### 📄 10+ Pre-designed Pages
-
-- 🏠 Homepage
-- 👤 About
-- 📞 Contact
-- 🛍️ Products
-- 📦 Product Single
-- 💡 Terms of services
-- 📄 Privacy Policy
-- 🔐 Login
-- 🔑 Register
-- 🚫 Custom 404
-
-## 🚀 Getting Started
-
-### 📦 Dependencies
-
-- shopify
-- astro 4.16.9+
-- node v20.10+
-- npm v10.2+
-- tailwind v3.4+
-
-<!-- get Shopify storefront API access token-->
-
-## 🛒 Retrieve Shopify Token & Add Demo Products
-
-- To get the tokens needed, create a Shopify partner account.
-  ![Screenshot_1](https://github.com/tfmurad/commerceplate/assets/145179606/7309e70c-905a-4f20-8ad0-bc73ef176e97)
-
-- Now go to 'stores' and select 'Add store.' Create a development store using the option 'Create development store'.
-  ![Screenshot_2](https://github.com/tfmurad/commerceplate/assets/145179606/f7bbeefd-61c5-44a5-97db-cd76dd9540f8)
-
-- Complete the process by creating your development store. This involves following the steps shown in the image.
-  ![Screenshot_3](https://github.com/tfmurad/commerceplate/assets/145179606/b774a0bf-1156-4dc2-995d-cb7ec5f403b1)
-
-- Click on import products.
-  ![Screenshot_4](https://github.com/tfmurad/commerceplate/assets/145179606/74c4e3fa-d9b3-47b8-b2e3-e6a1514ef8ac)
-
-- Locate the 'products' CSV file in the public folder of the repository and upload it for demo products.
-  ![Screenshot_5](https://github.com/tfmurad/commerceplate/assets/145179606/abc0ad01-fe98-483a-97d3-5e5ef240a349)
-
-- On the admin dashboard, click on ‘Settings’ at the bottom of the left sidebar.
-  ![Screenshot_6](https://github.com/tfmurad/commerceplate/assets/145179606/016346cd-75d9-4ee4-8703-810a0adcd209)
-
-- On the Settings page, click on ‘Apps and sales channels’ on the left sidebar.
-  ![Screenshot_7](https://github.com/tfmurad/commerceplate/assets/145179606/101e4145-6951-4658-a211-9c6680c27803)
-
-- In the Apps and sales channels page that opens, click on ‘Develop apps’ on the top right.
-  ![Screenshot_8](https://github.com/tfmurad/commerceplate/assets/145179606/164097b5-a36d-4f8a-a69c-5248cd505426)
-
-- Now, on the App development page that opens, click on ‘Create an app’.
-  ![Screenshot_10](https://github.com/tfmurad/commerceplate/assets/145179606/e8ef392b-0147-4dd6-a192-c643330cf7fd)
-
-- A ‘Create an app’ popup opens. Fill in any name in the ‘App Name’ text box. In the App Developer text box, your name and email id is automatically fetched. Else type in the same email id you used while signing up for the Shopify store.
-  ![Screenshot_11](https://github.com/tfmurad/commerceplate/assets/145179606/19a8bd57-8073-4e95-8a32-c11f00f082bc)
-
-- Next, click on ‘Configure’ in the Storefront API integration section.
-  ![Screenshot_12](https://github.com/tfmurad/commerceplate/assets/145179606/c49893e2-a058-4332-affc-82e81938df7e)
-
-- In the Storefront API access scopes, select and check all the boxes and click on ‘Save’ and then ‘Install app’.
-  ![Screenshot_13](https://github.com/tfmurad/commerceplate/assets/145179606/420f3fa6-5ec8-4daf-bd25-6e1a6c955b9a)
-
-- Navigate to the 'API credentials' tab and locate three essential pieces of information. Subsequently, update your `.env` file by replacing the placeholder quotes("") in the `.env.example` file with your Shopify credentials.
-  ![Screenshot_15](https://github.com/tfmurad/commerceplate/assets/145179606/516ea322-4151-40c0-a4d6-888973cd1915)
-  ![Screenshot_16](https://github.com/tfmurad/commerceplate/assets/145179606/9d2777a6-997a-4212-bad3-b416d7636903)
-
-- When adding your product, use the same alt title for images with the same color. This helps the first image appear as the color variant in the selector.
-  ![Screenshot_18](https://github.com/tfmurad/commerceplate/assets/145179606/8eee60c4-07dd-48b2-bb8c-a86c77964483)
-
-- We have the option to create additional collections for products.
-  ![Screenshot_17](https://github.com/tfmurad/commerceplate/assets/145179606/8baae171-4e39-47bb-9839-e91a9a4f50c5)
-
-### 👉 Install Dependencies
-
-```bash
-npm install
 ```
-
-### 👉 Development Command
-
-```bash
-npm run dev
+server.js              จุดเริ่มเซิร์ฟเวอร์
+src/app.js             ตั้งค่า Express, ความปลอดภัย, session
+src/routes/public.js   หน้าร้าน + API โหลดสินค้าเพิ่ม
+src/routes/admin.js    หลังบ้าน
+src/lib/db.js          คำสั่งฐานข้อมูลและอัปโหลดรูป (Supabase)
+views/                 เทมเพลต EJS
+public/                CSS, JS, favicon
+supabase/schema.sql    โครงสร้างฐานข้อมูล
 ```
-
-### 👉 Build Command
-
-```bash
-npm run build
-```
-
-<!-- reporting issue -->
-
-## 🐞 Reporting Issues
-
-We use GitHub Issues as the official bug tracker for this Template. Please Search [existing issues](https://github.com/themefisher/astrofront/issues). It’s possible someone has already reported the same problem.
-If your problem or idea has not been addressed yet, feel free to [open a new issue](https://github.com/themefisher/astrofront/issues).
-
-<!-- licence -->
-
-## 📝 License
-
-Copyright (c) 2024 - Present, Designed & Developed by [Themefisher](https://themefisher.com/)
-
-**Code License:** Released under the [MIT](https://github.com/themefisher/astrofront/blob/main/LICENSE) license.
-
-**Image license:** The images are only for demonstration purposes. They have their license, we don't have permission to share those images.
-
-## 💻 Need Custom Development Services?
-
-If you need a custom theme, theme customization, or complete website development services from scratch you can [Hire Us](https://themefisher.com/).
