@@ -2,6 +2,7 @@
 -- วิธีใช้: เปิด Supabase Dashboard > SQL Editor > วางไฟล์นี้ทั้งหมดแล้วกด Run
 
 create extension if not exists "pgcrypto";
+create extension if not exists "pg_trgm"; -- ช่วยให้ค้นหาข้อความ (ILIKE '%คำ%') ใช้ index ได้
 
 -- หมวดหมู่สินค้า
 create table if not exists public.categories (
@@ -34,6 +35,17 @@ create table if not exists public.products (
 
 create index if not exists products_category_idx on public.products(category_id);
 create index if not exists products_created_idx  on public.products(created_at desc);
+-- หน้าร้านดึงเฉพาะสินค้าที่เผยแพร่ เรียงตามใหม่สุด
+create index if not exists products_published_created_idx on public.products(created_at desc) where is_published;
+-- นับ/กรองตามสถานะ และดึงสินค้าแนะนำ
+create index if not exists products_status_idx   on public.products(status);
+create index if not exists products_featured_idx on public.products(is_featured) where is_featured;
+-- ค้นหาข้อความเร็วขึ้น (ILIKE '%คำ%') ด้วย trigram GIN index
+create index if not exists products_title_trgm      on public.products using gin (title gin_trgm_ops);
+create index if not exists products_brand_trgm      on public.products using gin (brand gin_trgm_ops);
+create index if not exists products_compatible_trgm on public.products using gin (compatible gin_trgm_ops);
+create index if not exists products_partno_trgm     on public.products using gin (part_number gin_trgm_ops);
+create index if not exists products_desc_trgm       on public.products using gin (description gin_trgm_ops);
 
 -- รูปสินค้า (หลายรูปต่อสินค้า)
 create table if not exists public.product_images (
