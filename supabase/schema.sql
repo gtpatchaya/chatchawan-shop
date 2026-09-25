@@ -47,6 +47,13 @@ create table if not exists public.product_images (
 
 create index if not exists product_images_product_idx on public.product_images(product_id, sort_order);
 
+-- ตั้งค่าร้าน (แก้ได้จากหลังบ้าน) เก็บแบบ key-value
+create table if not exists public.settings (
+  key         text primary key,
+  value       text not null default '',
+  updated_at  timestamptz not null default now()
+);
+
 -- อัปเดต updated_at อัตโนมัติ
 create or replace function public.touch_updated_at() returns trigger as $$
 begin
@@ -59,11 +66,19 @@ drop trigger if exists products_touch on public.products;
 create trigger products_touch before update on public.products
   for each row execute function public.touch_updated_at();
 
+drop trigger if exists settings_touch on public.settings;
+create trigger settings_touch before update on public.settings
+  for each row execute function public.touch_updated_at();
+
 -- เปิด Row Level Security
 -- เว็บเซิร์ฟเวอร์ใช้ service role key (ข้าม RLS ได้) ส่วนคนทั่วไปอ่านได้เฉพาะข้อมูลที่เผยแพร่
 alter table public.categories     enable row level security;
 alter table public.products       enable row level security;
 alter table public.product_images enable row level security;
+alter table public.settings       enable row level security;
+
+drop policy if exists "public read settings" on public.settings;
+create policy "public read settings" on public.settings for select using (true);
 
 drop policy if exists "public read categories" on public.categories;
 create policy "public read categories" on public.categories for select using (true);

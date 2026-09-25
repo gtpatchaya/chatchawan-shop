@@ -1,0 +1,89 @@
+<%- include('head') %>
+<div class="admin-head">
+  <div>
+    <h1>ตั้งค่าร้าน</h1>
+    <p class="muted">แก้ข้อมูลร้าน เบอร์ติดต่อ ที่ตั้ง และรูปพื้นหลังหน้าแรกได้ที่นี่ ไม่ต้องแก้ไฟล์</p>
+  </div>
+  <a class="btn btn-outline" href="/" target="_blank" rel="noopener"><%- icon('eye') %>ดูหน้าร้าน</a>
+</div>
+
+<div class="form-layout">
+  <form class="card form-card" method="post" action="/admin/settings" enctype="multipart/form-data">
+    <h2 class="card-title">ข้อมูลร้าน</h2>
+    <label class="field">
+      <span>ชื่อร้าน</span>
+      <input type="text" name="name" value="<%= shopSettings.name || '' %>" maxlength="120" placeholder="ชัชวาลเชียงกง">
+    </label>
+    <label class="field">
+      <span>คำโปรย (tagline)</span>
+      <input type="text" name="tagline" value="<%= shopSettings.tagline || '' %>" maxlength="200" placeholder="อะไหล่รถยนต์มือสอง คัดสภาพ ราคาเป็นกันเอง">
+    </label>
+
+    <h2 class="card-title">ช่องทางติดต่อ</h2>
+    <div class="field-row">
+      <label class="field">
+        <span>เบอร์โทร</span>
+        <input type="text" name="phone" value="<%= shopSettings.phone || '' %>" maxlength="40" inputmode="tel" placeholder="0835624751">
+      </label>
+      <label class="field">
+        <span>LINE ID</span>
+        <input type="text" name="line_id" value="<%= shopSettings.lineId || '' %>" maxlength="80" placeholder="@chatchawanautopart">
+      </label>
+    </div>
+    <div class="field-row">
+      <label class="field">
+        <span>ลิงก์ Facebook</span>
+        <input type="url" name="facebook_url" value="<%= shopSettings.facebookUrl || '' %>" maxlength="300" placeholder="https://facebook.com/...">
+      </label>
+      <label class="field">
+        <span>เวลาทำการ</span>
+        <input type="text" name="open_hours" value="<%= shopSettings.openHours || '' %>" maxlength="120" placeholder="จันทร์ - เสาร์ 08:00 - 18:00">
+      </label>
+    </div>
+
+    <h2 class="card-title">ที่ตั้งร้าน</h2>
+    <label class="field">
+      <span>ที่อยู่ร้าน</span>
+      <textarea name="address" rows="3" maxlength="400" placeholder="บ้านเลขที่ ถนน ตำบล อำเภอ จังหวัด รหัสไปรษณีย์"><%= shopSettings.address || '' %></textarea>
+    </label>
+    <label class="field">
+      <span>ลิงก์แผนที่ (Google Maps)</span>
+      <input type="url" name="map_url" value="<%= shopSettings.mapUrl || '' %>" maxlength="500" placeholder="https://maps.google.com/...">
+      <span class="muted small">เปิด Google Maps &rarr; ปักหมุดร้าน &rarr; แชร์ &rarr; คัดลอกลิงก์มาวาง</span>
+    </label>
+
+    <div class="form-actions">
+      <button class="btn btn-primary btn-lg" type="submit"><%- icon('check') %>บันทึกการตั้งค่า</button>
+      <a class="btn btn-ghost" href="/admin">ยกเลิก</a>
+    </div>
+  </form>
+
+  <aside class="form-side">
+    <div class="card">
+      <h2 class="card-title">รูปพื้นหลังหน้าแรก</h2>
+      <p class="muted small">รูปจะแสดงเป็นพื้นหลังแบบเบลอด้านหลังหัวข้อหน้าแรก แนะนำภาพแนวนอนความละเอียดสูง</p>
+      <% if (shopSettings.heroImageUrl) { %>
+        <div class="image-tile settings-hero-preview">
+          <img src="<%= shopSettings.heroImageUrl %>" alt="รูปพื้นหลังปัจจุบัน" loading="lazy">
+        </div>
+        <form method="post" action="/admin/settings/hero/delete" data-confirm="ลบรูปพื้นหลัง?">
+          <button type="submit" class="btn btn-danger btn-sm"><%- icon('trash') %>ลบรูปพื้นหลัง</button>
+        </form>
+      <% } else { %>
+        <p class="muted">ยังไม่มีรูปพื้นหลัง หน้าแรกจะใช้พื้นหลังสีปกติ</p>
+      <% } %>
+
+      <form method="post" action="/admin/settings" enctype="multipart/form-data" class="settings-hero-upload">
+        <label class="dropzone" data-dropzone>
+          <input type="file" name="hero_image" accept="image/*" data-file-input>
+          <%- icon('upload', 'icon icon-xl') %>
+          <strong>แตะเพื่อเลือกรูป หรือลากรูปมาวาง</strong>
+          <span class="muted">รูปเดียว ขนาดไม่เกิน 10MB ระบบจะย่อและแปลงให้อัตโนมัติ</span>
+        </label>
+        <div class="preview-grid" data-preview></div>
+        <button class="btn btn-primary btn-sm" type="submit"><%- icon('upload') %><%= shopSettings.heroImageUrl ? 'เปลี่ยนรูปพื้นหลัง' : 'อัปโหลดรูปพื้นหลัง' %></button>
+      </form>
+    </div>
+  </aside>
+</div>
+<%- include('foot') %>

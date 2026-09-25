@@ -2,6 +2,7 @@ const express = require('express');
 const multer = require('multer');
 const db = require('../lib/db');
 const auth = require('../lib/auth');
+const settings = require('../lib/settings');
 const { CONDITIONS, STATUSES, slugify } = require('../lib/format');
 
 const router = express.Router();
@@ -224,6 +225,62 @@ router.post('/images/:id/cover', async (req, res, next) => {
     const image = await db.setCoverImage(req.params.id);
     flash(req, 'success', 'ตั้งเป็นรูปหน้าปกแล้ว');
     res.redirect(image ? `/admin/products/${image.product_id}/edit` : '/admin');
+  } catch (err) {
+    next(err);
+  }
+});
+
+/* ---------------- ตั้งค่าร้าน ---------------- */
+
+router.get('/settings', (req, res) => {
+  res.render('admin/settings', { title: 'ตั้งค่าร้าน', shopSettings: settings.get() });
+});
+
+router.post('/settings', upload.single('hero_image'), async (req, res, next) => {
+  try {
+    const b = req.body;
+    const str = (v, max) => String(v || '').trim().slice(0, max);
+    // อัปเดตเฉพาะฟิลด์ที่ฟอร์มส่งมาจริง (ฟอร์มอัปโหลดรูปจะไม่มีฟิลด์ข้อความ จึงไม่ถูกล้าง)
+    const TEXT = [
+      ['name', 'shop_name', 120],
+      ['tagline', 'shop_tagline', 200],
+      ['phone', 'shop_phone', 40],
+      ['line_id', 'shop_line_id', 80],
+      ['facebook_url', 'shop_facebook_url', 300],
+      ['address', 'shop_address', 400],
+      ['map_url', 'shop_map_url', 500],
+      ['open_hours', 'shop_open_hours', 120],
+    ];
+    const entries = {};
+    for (const [field, key, max] of TEXT) {
+      if (b[field] !== undefined) entries[key] = str(b[field], max);
+    }
+
+    if (req.file) {
+      const current = settings.get();
+      const img = await db.uploadImage(req.file, { folder: 'settings', width: 1920 });
+      entries.hero_image_url = img.url;
+      entries.hero_image_path = img.path;
+      if (current.heroImagePath) await db.removeStoredImage(current.heroImagePath);
+    }
+
+    await db.saveSettings(entries);
+    await settings.load();
+    flash(req, 'success', req.file ? 'บันทึกรูปพื้นหลังแล้ว' : 'บันทึกการตั้งค่าร้านแล้ว');
+    res.redirect('/admin/settings');
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/settings/hero/delete', async (req, res, next) => {
+  try {
+    const current = settings.get();
+    if (current.heroImagePath) await db.removeStoredImage(current.heroImagePath);
+    await db.saveSettings({ hero_image_url: '', hero_image_path: '' });
+    await settings.load();
+    flash(req, 'success', 'ลบรูปพื้นหลังแล้ว');
+    res.redirect('/admin/settings');
   } catch (err) {
     next(err);
   }

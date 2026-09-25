@@ -23,6 +23,7 @@
       <nav class="admin-nav">
         <a href="/admin" class="<%= currentPath === '/admin' || currentPath.startsWith('/admin/products') ? 'active' : '' %>"><%- icon('box') %><span>สินค้า</span></a>
         <a href="/admin/categories" class="<%= currentPath.startsWith('/admin/categories') ? 'active' : '' %>"><%- icon('folder') %><span>หมวดหมู่</span></a>
+        <a href="/admin/settings" class="<%= currentPath.startsWith('/admin/settings') ? 'active' : '' %>"><%- icon('settings') %><span>ตั้งค่าร้าน</span></a>
         <a href="/" target="_blank" rel="noopener"><%- icon('eye') %><span>ดูหน้าร้าน</span></a>
         <form action="/admin/logout" method="post"><button type="submit"><%- icon('logout') %><span>ออกจากระบบ</span></button></form>
       </nav>

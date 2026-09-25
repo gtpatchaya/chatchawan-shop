@@ -8,7 +8,7 @@ const PRODUCT_SELECT =
 
 function check({ data, error, count }) {
   if (error) throw new Error(error.message);
-  return count === undefined ? data : { data, count };
+  return count == null ? data : { data, count };
 }
 
 function sortImages(product) {
@@ -138,7 +138,49 @@ async function countProducts() {
   return Object.fromEntries(statuses.map((s, i) => [s, check(results[i]).count || 0]));
 }
 
+/* ---------------- ตั้งค่าร้าน ---------------- */
+
+async function getSettings() {
+  return check(await supabase().from('settings').select('key, value'));
+}
+
+async function saveSettings(entries) {
+  const rows = Object.entries(entries).map(([key, value]) => ({
+    key,
+    value: value == null ? '' : String(value),
+  }));
+  if (!rows.length) return;
+  return check(await supabase().from('settings').upsert(rows, { onConflict: 'key' }));
+}
+
 /* ---------------- รูปภาพ ---------------- */
+
+/**
+ * ย่อรูปแล้วอัปโหลดขึ้น storage คืน { path, url } ใช้กับรูปพื้นหลัง hero
+ */
+async function uploadImage(file, { folder = 'misc', width = 1920 } = {}) {
+  const bucket = supabase().storage.from(config.supabase.bucket);
+  const buffer = await sharp(file.buffer)
+    .rotate()
+    .resize({ width, height: width, fit: 'inside', withoutEnlargement: true })
+    .webp({ quality: 80 })
+    .toBuffer();
+
+  const path = `${folder}/${crypto.randomUUID()}.webp`;
+  const { error } = await bucket.upload(path, buffer, {
+    contentType: 'image/webp',
+    cacheControl: '31536000',
+  });
+  if (error) throw new Error(`อัปโหลดรูปไม่สำเร็จ: ${error.message}`);
+
+  const { data } = bucket.getPublicUrl(path);
+  return { path, url: data.publicUrl };
+}
+
+async function removeStoredImage(path) {
+  if (!path) return;
+  await supabase().storage.from(config.supabase.bucket).remove([path]);
+}
 
 /**
  * ย่อรูปให้เหมาะกับเว็บ (กว้างไม่เกิน 1600px, แปลงเป็น WebP) แล้วอัปโหลดขึ้น Supabase Storage
@@ -223,6 +265,10 @@ module.exports = {
   updateProduct,
   deleteProduct,
   countProducts,
+  getSettings,
+  saveSettings,
+  uploadImage,
+  removeStoredImage,
   addImages,
   deleteImage,
   setCoverImage,

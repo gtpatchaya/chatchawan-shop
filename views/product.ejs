@@ -61,6 +61,13 @@
           <% } %>
         </div>
 
+        <% if (product.description) { %>
+          <div class="detail-desc">
+            <h2>รายละเอียดสินค้า</h2>
+            <p><%= product.description %></p>
+          </div>
+        <% } %>
+
         <div class="detail-actions">
           <% if (shop.lineId) { %><a class="btn btn-line btn-lg" href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener"><%- icon('chat') %>สอบถาม / สั่งซื้อทาง LINE</a><% } %>
           <% if (shop.phone) { %><a class="btn btn-outline btn-lg" href="<%= fmt.phoneHref(shop.phone) %>"><%- icon('phone') %>โทร <%= shop.phone %></a><% } %>
@@ -76,13 +83,6 @@
           <div><dt>ลงขายเมื่อ</dt><dd><%= fmt.formatDate(product.created_at) %></dd></div>
           <div><dt>รหัสสินค้า</dt><dd><%= product.id.slice(0, 8).toUpperCase() %></dd></div>
         </dl>
-
-        <% if (product.description) { %>
-          <div class="detail-desc">
-            <h2>รายละเอียดสินค้า</h2>
-            <p><%= product.description %></p>
-          </div>
-        <% } %>
 
         <div class="assure">
           <div><%- icon('shield') %><span>ตรวจสภาพก่อนส่งมอบ</span></div>

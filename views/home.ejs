@@ -1,6 +1,7 @@
 <%- include('partials/head') %>
 
-<section class="hero">
+<section class="hero <%= shop.heroImageUrl ? 'hero-has-cover' : '' %>">
+  <% if (shop.heroImageUrl) { %><img class="hero-bg" src="<%= shop.heroImageUrl %>" alt="" aria-hidden="true" fetchpriority="high"><% } %>
   <div class="container hero-inner">
     <div class="hero-copy">
       <span class="eyebrow"><%- icon('store') %>ร้าน<%= shop.name %></span>

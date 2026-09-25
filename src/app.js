@@ -4,6 +4,7 @@ const helmet = require('helmet');
 const cookieSession = require('cookie-session');
 const config = require('./config');
 const format = require('./lib/format');
+const settings = require('./lib/settings');
 const { icon } = require('./lib/icons');
 
 const app = express();
@@ -54,7 +55,7 @@ app.use(
 
 // ค่าที่ทุกหน้าใช้ร่วมกัน
 app.use((req, res, next) => {
-  res.locals.shop = config.shop;
+  res.locals.shop = settings.get();
   res.locals.fmt = format;
   res.locals.icon = icon;
   res.locals.currentPath = req.path;
