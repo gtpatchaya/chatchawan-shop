@@ -1,0 +1,16 @@
+<% if (result.items.length) { %>
+  <div class="product-grid" data-infinite data-query="<%= query %>" data-next-page="2" data-has-more="<%= result.hasMore %>">
+    <%- include('product-cards', { products: result.items }) %>
+  </div>
+  <div class="load-more" data-load-more <%= result.hasMore ? '' : 'hidden' %>>
+    <span class="spinner" aria-hidden="true"></span>
+    <button type="button" class="btn btn-outline">โหลดสินค้าเพิ่ม</button>
+  </div>
+<% } else { %>
+  <div class="empty-state">
+    <%- icon('box', 'icon icon-xl') %>
+    <h3>ยังไม่พบสินค้าที่ค้นหา</h3>
+    <p>ลองค้นหาด้วยคำอื่น หรือทักสอบถามร้านโดยตรง เรามีของในร้านอีกมากที่ยังไม่ได้ลงเว็บ</p>
+    <% if (shop.lineId) { %><a class="btn btn-line" href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener"><%- icon('chat') %>สอบถามทาง LINE</a><% } %>
+  </div>
+<% } %>

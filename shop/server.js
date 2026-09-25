@@ -1,0 +1,7 @@
+require('dotenv').config();
+const app = require('./src/app');
+const config = require('./src/config');
+
+app.listen(config.port, () => {
+  console.log(`${config.shop.name} พร้อมใช้งานที่ http://localhost:${config.port}`);
+});

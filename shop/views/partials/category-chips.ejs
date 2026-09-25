@@ -1,0 +1,6 @@
+<div class="chips" role="list">
+  <a role="listitem" class="chip <%= !active ? 'active' : '' %>" href="/products<%= sortQs %>">ทั้งหมด</a>
+  <% categories.forEach(function (c) { %>
+    <a role="listitem" class="chip <%= active === c.slug ? 'active' : '' %>" href="/products?category=<%= encodeURIComponent(c.slug) %><%= sortQs.replace('?', '&') %>"><%= c.name %></a>
+  <% }) %>
+</div>

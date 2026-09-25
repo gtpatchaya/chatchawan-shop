@@ -1,0 +1,117 @@
+<%- include('partials/head', { metaDescription: `${product.title} ราคา ${fmt.formatPrice(product.price)} ${product.compatible ? 'ใช้กับ ' + product.compatible : ''}`, ogImage: product.images[0] && product.images[0].url }) %>
+<%
+  const discount = product.original_price && product.original_price > product.price && product.price > 0
+    ? Math.round((1 - product.price / product.original_price) * 100) : 0;
+  const ask = `สนใจสินค้า: ${product.title} (${fmt.formatPrice(product.price)})`;
+%>
+<section class="section section-top">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="breadcrumb">
+      <a href="/">หน้าแรก</a><%- icon('chevronRight') %>
+      <a href="/products">สินค้า</a><%- icon('chevronRight') %>
+      <% if (product.category) { %><a href="/products?category=<%= encodeURIComponent(product.category.slug) %>"><%= product.category.name %></a><%- icon('chevronRight') %><% } %>
+      <span><%= product.title %></span>
+    </nav>
+
+    <div class="product-detail">
+      <div class="gallery" data-gallery>
+        <div class="gallery-main">
+          <% if (product.images.length) { %>
+            <div class="gallery-track" data-gallery-track>
+              <% product.images.forEach(function (img, i) { %>
+                <figure class="gallery-slide">
+                  <img src="<%= img.url %>" alt="<%= product.title %> ภาพที่ <%= i + 1 %>" <%= i === 0 ? '' : 'loading=lazy' %> decoding="async">
+                </figure>
+              <% }) %>
+            </div>
+            <% if (product.images.length > 1) { %>
+              <button type="button" class="gallery-nav prev" data-gallery-prev aria-label="ภาพก่อนหน้า"><%- icon('chevronLeft') %></button>
+              <button type="button" class="gallery-nav next" data-gallery-next aria-label="ภาพถัดไป"><%- icon('chevronRight') %></button>
+              <span class="gallery-counter"><span data-gallery-index>1</span> / <%= product.images.length %></span>
+            <% } %>
+          <% } else { %>
+            <div class="thumb-empty thumb-empty-lg"><%- icon('image', 'icon icon-xl') %><span>ยังไม่มีรูปภาพ ขอดูรูปเพิ่มได้ทาง LINE</span></div>
+          <% } %>
+          <% if (product.status !== 'available') { %><span class="badge badge-lg badge-<%= product.status %>"><%= fmt.STATUSES[product.status] %></span><% } %>
+        </div>
+        <% if (product.images.length > 1) { %>
+          <div class="gallery-thumbs">
+            <% product.images.forEach(function (img, i) { %>
+              <button type="button" class="<%= i === 0 ? 'active' : '' %>" data-gallery-thumb="<%= i %>" aria-label="ดูภาพที่ <%= i + 1 %>">
+                <img src="<%= img.url %>" alt="" loading="lazy">
+              </button>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+
+      <div class="detail-info">
+        <div class="detail-tags">
+          <span class="condition condition-<%= product.condition %>"><%= fmt.CONDITIONS[product.condition] %></span>
+          <span class="status-pill status-<%= product.status %>"><span class="dot"></span><%= fmt.STATUSES[product.status] %></span>
+        </div>
+        <h1 class="detail-title"><%= product.title %></h1>
+        <% if (product.compatible) { %><p class="detail-compat">ใช้กับรุ่น: <strong><%= product.compatible %></strong></p><% } %>
+
+        <div class="detail-price">
+          <span class="price price-lg"><%= fmt.formatPrice(product.price) %></span>
+          <% if (discount > 0) { %>
+            <span class="price-old"><%= fmt.formatPrice(product.original_price) %></span>
+            <span class="price-save">ถูกกว่าของใหม่ <%= discount %>%</span>
+          <% } %>
+        </div>
+
+        <div class="detail-actions">
+          <% if (shop.lineId) { %><a class="btn btn-line btn-lg" href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener"><%- icon('chat') %>สอบถาม / สั่งซื้อทาง LINE</a><% } %>
+          <% if (shop.phone) { %><a class="btn btn-outline btn-lg" href="<%= fmt.phoneHref(shop.phone) %>"><%- icon('phone') %>โทร <%= shop.phone %></a><% } %>
+          <button type="button" class="btn btn-ghost btn-sm copy-btn" data-copy="<%= ask %>"><%- icon('tag') %>คัดลอกข้อความสอบถาม</button>
+        </div>
+
+        <dl class="spec-list">
+          <% if (product.category) { %><div><dt>หมวดหมู่</dt><dd><%= product.category.name %></dd></div><% } %>
+          <% if (product.brand) { %><div><dt>ยี่ห้อ</dt><dd><%= product.brand %></dd></div><% } %>
+          <% if (product.part_number) { %><div><dt>รหัสอะไหล่</dt><dd><%= product.part_number %></dd></div><% } %>
+          <div><dt>สภาพ</dt><dd><%= fmt.CONDITIONS[product.condition] %></dd></div>
+          <div><dt>จำนวน</dt><dd><%= product.quantity %> ชิ้น</dd></div>
+          <div><dt>ลงขายเมื่อ</dt><dd><%= fmt.formatDate(product.created_at) %></dd></div>
+          <div><dt>รหัสสินค้า</dt><dd><%= product.id.slice(0, 8).toUpperCase() %></dd></div>
+        </dl>
+
+        <% if (product.description) { %>
+          <div class="detail-desc">
+            <h2>รายละเอียดสินค้า</h2>
+            <p><%= product.description %></p>
+          </div>
+        <% } %>
+
+        <div class="assure">
+          <div><%- icon('shield') %><span>ตรวจสภาพก่อนส่งมอบ</span></div>
+          <div><%- icon('store') %><span>มาดูของที่ร้านได้</span></div>
+          <div><%- icon('camera') %><span>ขอภาพเพิ่มได้</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<% if (related.length) { %>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div><span class="eyebrow"><%- icon('grid') %>สินค้าใกล้เคียง</span><h2>คุณอาจสนใจ</h2></div>
+      <div class="rail-controls">
+        <button type="button" class="icon-btn" data-rail-prev aria-label="เลื่อนซ้าย"><%- icon('chevronLeft') %></button>
+        <button type="button" class="icon-btn" data-rail-next aria-label="เลื่อนขวา"><%- icon('chevronRight') %></button>
+      </div>
+    </div>
+    <div class="rail" data-rail><%- include('partials/product-cards', { products: related }) %></div>
+  </div>
+</section>
+<% } %>
+
+<div class="mobile-buybar">
+  <div><small>ราคา</small><strong><%= fmt.formatPrice(product.price) %></strong></div>
+  <% if (shop.phone) { %><a class="icon-btn icon-btn-lg" href="<%= fmt.phoneHref(shop.phone) %>" aria-label="โทรหาร้าน"><%- icon('phone') %></a><% } %>
+  <% if (shop.lineId) { %><a class="btn btn-line" href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener"><%- icon('chat') %>ทัก LINE</a><% } %>
+</div>
+<%- include('partials/foot') %>

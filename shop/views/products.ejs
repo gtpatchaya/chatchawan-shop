@@ -1,0 +1,40 @@
+<%- include('partials/head') %>
+<%
+  const params = new URLSearchParams();
+  if (filters.q) params.set('q', filters.q);
+  if (filters.category) params.set('category', filters.category.slug);
+  if (filters.sort !== 'newest') params.set('sort', filters.sort);
+  const query = params.toString();
+  const sortQs = filters.sort !== 'newest' ? `?sort=${filters.sort}` : '';
+%>
+<section class="page-head">
+  <div class="container">
+    <nav class="breadcrumb" aria-label="breadcrumb"><a href="/">หน้าแรก</a><%- icon('chevronRight') %><span><%= title %></span></nav>
+    <h1><%= title %></h1>
+    <p class="muted">พบ <%= result.total %> รายการ</p>
+  </div>
+</section>
+
+<section class="section section-tight filter-bar">
+  <div class="container filter-inner">
+    <%- include('partials/category-chips', { categories, active: filters.category && filters.category.slug, sortQs }) %>
+    <form class="sort-form" method="get" action="/products" data-auto-submit>
+      <% if (filters.q) { %><input type="hidden" name="q" value="<%= filters.q %>"><% } %>
+      <% if (filters.category) { %><input type="hidden" name="category" value="<%= filters.category.slug %>"><% } %>
+      <label for="sort" class="visually-hidden">เรียงตาม</label>
+      <select id="sort" name="sort">
+        <option value="newest" <%= filters.sort === 'newest' ? 'selected' : '' %>>ล่าสุด</option>
+        <option value="price_asc" <%= filters.sort === 'price_asc' ? 'selected' : '' %>>ราคา ต่ำ - สูง</option>
+        <option value="price_desc" <%= filters.sort === 'price_desc' ? 'selected' : '' %>>ราคา สูง - ต่ำ</option>
+      </select>
+      <noscript><button class="btn btn-outline btn-sm" type="submit">เรียง</button></noscript>
+    </form>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <%- include('partials/product-grid', { result, query }) %>
+  </div>
+</section>
+<%- include('partials/foot') %>

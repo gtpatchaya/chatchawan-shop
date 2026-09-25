@@ -1,0 +1,32 @@
+<%- include('head') %>
+<div class="admin-head">
+  <div>
+    <h1>หมวดหมู่สินค้า</h1>
+    <p class="muted">ลำดับน้อยจะแสดงก่อน</p>
+  </div>
+</div>
+
+<form class="card cat-row cat-new" method="post" action="/admin/categories">
+  <input type="text" name="name" placeholder="ชื่อหมวดหมู่ใหม่" required maxlength="100" aria-label="ชื่อหมวดหมู่">
+  <input type="text" name="slug" placeholder="slug (ไม่บังคับ)" maxlength="100" aria-label="slug">
+  <input type="number" name="sort_order" placeholder="ลำดับ" aria-label="ลำดับ">
+  <button class="btn btn-primary" type="submit"><%- icon('plus') %>เพิ่ม</button>
+</form>
+
+<div class="cat-list">
+  <% categories.forEach(function (c) { %>
+    <div class="card cat-row">
+      <form class="cat-edit" method="post" action="/admin/categories/<%= c.id %>">
+        <input type="text" name="name" value="<%= c.name %>" required maxlength="100" aria-label="ชื่อหมวดหมู่">
+        <input type="text" name="slug" value="<%= c.slug %>" maxlength="100" aria-label="slug">
+        <input type="number" name="sort_order" value="<%= c.sort_order %>" aria-label="ลำดับ">
+        <button class="btn btn-outline btn-sm" type="submit">บันทึก</button>
+      </form>
+      <form method="post" action="/admin/categories/<%= c.id %>/delete" data-confirm="ลบหมวดหมู่ &quot;<%= c.name %>&quot;?">
+        <button class="icon-btn icon-btn-danger" type="submit" aria-label="ลบหมวดหมู่"><%- icon('trash') %></button>
+      </form>
+    </div>
+  <% }) %>
+  <% if (!categories.length) { %><p class="muted">ยังไม่มีหมวดหมู่</p><% } %>
+</div>
+<%- include('foot') %>

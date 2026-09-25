@@ -1,0 +1,68 @@
+<%- include('head') %>
+<div class="admin-head">
+  <div>
+    <h1>จัดการสินค้า</h1>
+    <p class="muted">ทั้งหมด <%= counts.available + counts.reserved + counts.sold %> รายการ</p>
+  </div>
+  <a class="btn btn-primary" href="/admin/products/new"><%- icon('plus') %>เพิ่มสินค้าใหม่</a>
+</div>
+
+<div class="stat-row">
+  <a href="/admin?status=available" class="stat <%= status === 'available' ? 'active' : '' %>"><span>พร้อมขาย</span><strong><%= counts.available %></strong></a>
+  <a href="/admin?status=reserved" class="stat <%= status === 'reserved' ? 'active' : '' %>"><span>ติดจอง</span><strong><%= counts.reserved %></strong></a>
+  <a href="/admin?status=sold" class="stat <%= status === 'sold' ? 'active' : '' %>"><span>ขายแล้ว</span><strong><%= counts.sold %></strong></a>
+</div>
+
+<form class="admin-search" method="get" action="/admin">
+  <%- icon('search') %>
+  <input type="search" name="q" value="<%= q %>" placeholder="ค้นหาชื่อสินค้า ยี่ห้อ รุ่นรถ รหัสอะไหล่">
+  <% if (status) { %><input type="hidden" name="status" value="<%= status %>"><% } %>
+  <button class="btn btn-outline btn-sm" type="submit">ค้นหา</button>
+  <% if (q || status) { %><a class="btn btn-ghost btn-sm" href="/admin">ล้างตัวกรอง</a><% } %>
+</form>
+
+<% if (!result.items.length) { %>
+  <div class="card empty-state">
+    <%- icon('box', 'icon icon-xl') %>
+    <h3>ยังไม่มีสินค้า</h3>
+    <p>เริ่มลงขายสินค้าชิ้นแรกได้เลย ใส่รูป ราคา และรายละเอียดสภาพสินค้า</p>
+    <a class="btn btn-primary" href="/admin/products/new"><%- icon('plus') %>เพิ่มสินค้าใหม่</a>
+  </div>
+<% } else { %>
+  <div class="admin-list">
+    <% result.items.forEach(function (p) { const cover = p.images[0]; %>
+      <div class="admin-item card">
+        <a class="admin-thumb" href="/admin/products/<%= p.id %>/edit">
+          <% if (cover) { %><img src="<%= cover.url %>" alt="" loading="lazy"><% } else { %><%- icon('image') %><% } %>
+        </a>
+        <div class="admin-item-body">
+          <a class="admin-item-title" href="/admin/products/<%= p.id %>/edit"><%= p.title %></a>
+          <div class="admin-item-meta">
+            <span class="price"><%= fmt.formatPrice(p.price) %></span>
+            <span><%= p.category ? p.category.name : 'ไม่มีหมวดหมู่' %></span>
+            <span><%= p.images.length %> รูป</span>
+            <% if (!p.is_published) { %><span class="tag tag-muted">ซ่อนอยู่</span><% } %>
+            <% if (p.is_featured) { %><span class="tag tag-accent">แนะนำ</span><% } %>
+          </div>
+        </div>
+        <form class="admin-item-status" method="post" action="/admin/products/<%= p.id %>/status">
+          <input type="hidden" name="back" value="/admin<%= status ? '?status=' + status : '' %>">
+          <select name="status" class="status-select status-<%= p.status %>" data-auto-submit aria-label="สถานะสินค้า">
+            <% Object.keys(STATUSES).forEach(function (s) { %><option value="<%= s %>" <%= p.status === s ? 'selected' : '' %>><%= STATUSES[s] %></option><% }) %>
+          </select>
+        </form>
+        <div class="admin-item-actions">
+          <a class="icon-btn" href="/product/<%= p.id %>" target="_blank" rel="noopener" aria-label="ดูหน้าสินค้า"><%- icon('eye') %></a>
+          <a class="icon-btn" href="/admin/products/<%= p.id %>/edit" aria-label="แก้ไข"><%- icon('edit') %></a>
+        </div>
+      </div>
+    <% }) %>
+  </div>
+  <div class="pager">
+    <% const base = `/admin?${q ? 'q=' + encodeURIComponent(q) + '&' : ''}${status ? 'status=' + status + '&' : ''}`; %>
+    <% if (page > 1) { %><a class="btn btn-outline btn-sm" href="<%= base %>page=<%= page - 1 %>"><%- icon('chevronLeft') %>ก่อนหน้า</a><% } %>
+    <span class="muted">หน้า <%= page %></span>
+    <% if (result.hasMore) { %><a class="btn btn-outline btn-sm" href="<%= base %>page=<%= page + 1 %>">ถัดไป<%- icon('chevronRight') %></a><% } %>
+  </div>
+<% } %>
+<%- include('foot') %>

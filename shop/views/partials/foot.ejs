@@ -1,0 +1,37 @@
+  </main>
+  <footer class="site-footer" id="contact">
+    <div class="container footer-grid">
+      <div>
+        <a href="/" class="brand brand-light">
+          <span class="brand-mark"><%- icon('wrench') %></span>
+          <span class="brand-text"><strong><%= shop.name %></strong><small><%= shop.tagline %></small></span>
+        </a>
+        <p class="footer-note">สินค้าทุกชิ้นถ่ายจากของจริงในร้าน สอบถามรายละเอียดและสภาพสินค้าได้ก่อนตัดสินใจ</p>
+      </div>
+      <div>
+        <h3>ติดต่อร้าน</h3>
+        <ul class="contact-list">
+          <% if (shop.phone) { %><li><%- icon('phone') %><a href="<%= fmt.phoneHref(shop.phone) %>"><%= shop.phone %></a></li><% } %>
+          <% if (shop.lineId) { %><li><%- icon('chat') %><a href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener">LINE: <%= shop.lineId %></a></li><% } %>
+          <% if (shop.facebookUrl) { %><li><%- icon('facebook') %><a href="<%= shop.facebookUrl %>" target="_blank" rel="noopener">Facebook</a></li><% } %>
+          <% if (shop.openHours) { %><li><%- icon('clock') %><span><%= shop.openHours %></span></li><% } %>
+        </ul>
+      </div>
+      <div>
+        <h3>ที่ตั้งร้าน</h3>
+        <ul class="contact-list">
+          <li><%- icon('pin') %><span><%= shop.address || 'สอบถามที่ตั้งร้านได้ทางโทรศัพท์หรือ LINE' %></span></li>
+        </ul>
+        <% if (shop.mapUrl) { %>
+          <a class="btn btn-ghost-light btn-sm" href="<%= shop.mapUrl %>" target="_blank" rel="noopener"><%- icon('pin') %>เปิดแผนที่</a>
+        <% } %>
+      </div>
+    </div>
+    <div class="container footer-bottom">
+      <span>&copy; <%= new Date().getFullYear() %> <%= shop.name %></span>
+      <a href="/admin">สำหรับเจ้าของร้าน</a>
+    </div>
+  </footer>
+  <script src="/js/site.js" defer></script>
+</body>
+</html>

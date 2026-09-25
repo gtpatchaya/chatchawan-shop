@@ -1,0 +1,145 @@
+<%- include('head') %>
+<% const isNew = !product.id; const action = isNew ? '/admin/products' : `/admin/products/${product.id}`; %>
+<div class="admin-head">
+  <div>
+    <a class="link-muted" href="/admin"><%- icon('arrowLeft') %>กลับไปหน้ารายการ</a>
+    <h1><%= isNew ? 'เพิ่มสินค้าใหม่' : 'แก้ไขสินค้า' %></h1>
+  </div>
+  <% if (!isNew) { %><a class="btn btn-outline" href="/product/<%= product.id %>" target="_blank" rel="noopener"><%- icon('eye') %>ดูหน้าสินค้า</a><% } %>
+</div>
+
+<% if (error) { %><div class="alert alert-error"><%- icon('close') %><span><%= error %></span></div><% } %>
+
+<div class="form-layout">
+  <form id="product-form" class="card form-card" method="post" action="<%= action %>" enctype="multipart/form-data" data-product-form>
+    <h2 class="card-title">ข้อมูลสินค้า</h2>
+    <label class="field">
+      <span>ชื่อสินค้า <em>*</em></span>
+      <input type="text" name="title" value="<%= product.title || '' %>" required maxlength="200" placeholder="เช่น ไดชาร์จ Toyota Vigo 2.5 เดิมติดรถ">
+    </label>
+
+    <div class="field-row">
+      <label class="field">
+        <span>ราคาขาย (บาท)</span>
+        <input type="number" name="price" value="<%= product.price || '' %>" min="0" step="1" inputmode="numeric" placeholder="0 = สอบถามราคา">
+      </label>
+      <label class="field">
+        <span>ราคาของใหม่ (ถ้ามี)</span>
+        <input type="number" name="original_price" value="<%= product.original_price || '' %>" min="0" step="1" inputmode="numeric" placeholder="ใช้แสดงส่วนลด">
+      </label>
+    </div>
+
+    <div class="field-row">
+      <label class="field">
+        <span>หมวดหมู่</span>
+        <select name="category_id">
+          <option value="">- ไม่ระบุ -</option>
+          <% categories.forEach(function (c) { %><option value="<%= c.id %>" <%= product.category_id === c.id ? 'selected' : '' %>><%= c.name %></option><% }) %>
+        </select>
+      </label>
+      <label class="field">
+        <span>ยี่ห้อ</span>
+        <input type="text" name="brand" value="<%= product.brand || '' %>" maxlength="100" placeholder="เช่น Toyota, Denso">
+      </label>
+    </div>
+
+    <div class="field-row">
+      <label class="field">
+        <span>ใช้กับรุ่นรถ</span>
+        <input type="text" name="compatible" value="<%= product.compatible || '' %>" maxlength="300" placeholder="เช่น Vigo ปี 2005-2014, Fortuner">
+      </label>
+      <label class="field">
+        <span>รหัสอะไหล่ (Part No.)</span>
+        <input type="text" name="part_number" value="<%= product.part_number || '' %>" maxlength="100">
+      </label>
+    </div>
+
+    <div class="field-row field-row-3">
+      <label class="field">
+        <span>สภาพสินค้า</span>
+        <select name="condition">
+          <% Object.keys(CONDITIONS).forEach(function (c) { %><option value="<%= c %>" <%= product.condition === c ? 'selected' : '' %>><%= CONDITIONS[c] %></option><% }) %>
+        </select>
+      </label>
+      <label class="field">
+        <span>สถานะ</span>
+        <select name="status">
+          <% Object.keys(STATUSES).forEach(function (s) { %><option value="<%= s %>" <%= product.status === s ? 'selected' : '' %>><%= STATUSES[s] %></option><% }) %>
+        </select>
+      </label>
+      <label class="field">
+        <span>จำนวน (ชิ้น)</span>
+        <input type="number" name="quantity" value="<%= product.quantity ?? 1 %>" min="0" step="1" inputmode="numeric">
+      </label>
+    </div>
+
+    <label class="field">
+      <span>รายละเอียดสินค้า</span>
+      <textarea name="description" rows="6" maxlength="5000" placeholder="บอกสภาพ ตำหนิ ที่มา การรับประกัน หรือข้อมูลที่ลูกค้าควรรู้"><%= product.description || '' %></textarea>
+    </label>
+
+    <div class="toggles">
+      <label class="toggle"><input type="checkbox" name="is_published" <%= product.is_published ? 'checked' : '' %>><span class="toggle-ui"></span><span>แสดงบนหน้าเว็บ</span></label>
+      <label class="toggle"><input type="checkbox" name="is_featured" <%= product.is_featured ? 'checked' : '' %>><span class="toggle-ui"></span><span>ปักหมุดเป็นสินค้าแนะนำ</span></label>
+    </div>
+
+    <h2 class="card-title">เพิ่มรูปภาพ</h2>
+    <label class="dropzone" data-dropzone>
+      <input type="file" name="images" accept="image/*" multiple data-file-input>
+      <%- icon('upload', 'icon icon-xl') %>
+      <strong>แตะเพื่อเลือกรูป หรือลากรูปมาวางที่นี่</strong>
+      <span class="muted">เลือกได้ครั้งละหลายรูป (สูงสุด 12 รูป, รูปละไม่เกิน 10MB) ระบบจะย่อขนาดให้อัตโนมัติ</span>
+    </label>
+    <div class="preview-grid" data-preview></div>
+
+    <div class="form-actions">
+      <button class="btn btn-primary btn-lg" type="submit" data-submit><%- icon('check') %><%= isNew ? 'บันทึกและลงขาย' : 'บันทึกการแก้ไข' %></button>
+      <a class="btn btn-ghost" href="/admin">ยกเลิก</a>
+    </div>
+  </form>
+
+  <aside class="form-side">
+    <% if (!isNew) { %>
+      <div class="card">
+        <h2 class="card-title">รูปภาพปัจจุบัน (<%= product.images.length %>)</h2>
+        <% if (!product.images.length) { %>
+          <p class="muted">ยังไม่มีรูป เพิ่มรูปได้ที่ฟอร์มด้านซ้าย</p>
+        <% } else { %>
+          <p class="muted small">รูปแรกจะใช้เป็นรูปหน้าปกของสินค้า</p>
+          <div class="image-manager">
+            <% product.images.forEach(function (img, i) { %>
+              <div class="image-tile">
+                <img src="<%= img.url %>" alt="" loading="lazy">
+                <% if (i === 0) { %><span class="tag tag-accent cover-tag">รูปปก</span><% } %>
+                <div class="image-tile-actions">
+                  <% if (i !== 0) { %>
+                    <form method="post" action="/admin/images/<%= img.id %>/cover"><button type="submit" class="icon-btn" aria-label="ตั้งเป็นรูปปก" title="ตั้งเป็นรูปปก"><%- icon('star') %></button></form>
+                  <% } %>
+                  <form method="post" action="/admin/images/<%= img.id %>/delete" data-confirm="ลบรูปนี้?"><button type="submit" class="icon-btn icon-btn-danger" aria-label="ลบรูป" title="ลบรูป"><%- icon('trash') %></button></form>
+                </div>
+              </div>
+            <% }) %>
+          </div>
+        <% } %>
+      </div>
+      <div class="card danger-card">
+        <h2 class="card-title">ลบสินค้า</h2>
+        <p class="muted small">ลบสินค้าและรูปทั้งหมดถาวร หากขายแล้วแนะนำให้เปลี่ยนสถานะเป็น "ขายแล้ว" แทน</p>
+        <form method="post" action="/admin/products/<%= product.id %>/delete" data-confirm="ต้องการลบสินค้านี้ถาวรใช่ไหม?">
+          <button type="submit" class="btn btn-danger btn-sm"><%- icon('trash') %>ลบสินค้านี้</button>
+        </form>
+      </div>
+    <% } else { %>
+      <div class="card tips">
+        <h2 class="card-title">เคล็ดลับลงขายให้ขายไว</h2>
+        <ul>
+          <li><%- icon('camera') %><span>ถ่ายรูปในที่สว่าง หลายมุม และถ่ายตำหนิให้ชัด</span></li>
+          <li><%- icon('tag') %><span>ใส่ราคาของใหม่ ลูกค้าจะเห็นว่าประหยัดได้เท่าไร</span></li>
+          <li><%- icon('wrench') %><span>ระบุรุ่นรถและปีที่ใช้ได้ ช่วยให้ค้นหาเจอง่าย</span></li>
+          <li><%- icon('shield') %><span>บอกสภาพตามจริง สร้างความเชื่อมั่นให้ลูกค้า</span></li>
+        </ul>
+      </div>
+    <% } %>
+  </aside>
+</div>
+<%- include('foot') %>

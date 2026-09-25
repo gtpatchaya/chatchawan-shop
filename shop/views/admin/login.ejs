@@ -1,0 +1,17 @@
+<%- include('head') %>
+<div class="login-wrap">
+  <form class="card login-card" method="post" action="/admin/login">
+    <span class="brand-mark brand-mark-lg"><%- icon('wrench') %></span>
+    <h1>เข้าสู่ระบบหลังบ้าน</h1>
+    <p class="muted"><%= shop.name %></p>
+    <% if (error) { %><div class="alert alert-error"><%- icon('close') %><span><%= error %></span></div><% } %>
+    <input type="hidden" name="next" value="<%= next %>">
+    <label class="field">
+      <span>รหัสผ่าน</span>
+      <input type="password" name="password" required autofocus autocomplete="current-password">
+    </label>
+    <button class="btn btn-primary btn-block" type="submit">เข้าสู่ระบบ</button>
+    <a class="link-muted" href="/"><%- icon('arrowLeft') %>กลับหน้าร้าน</a>
+  </form>
+</div>
+<%- include('foot') %>

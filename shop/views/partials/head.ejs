@@ -1,0 +1,43 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title><%= title ? `${title} | ${shop.name}` : `${shop.name} - ${shop.tagline}` %></title>
+  <meta name="description" content="<%= locals.metaDescription || `${shop.name} ${shop.tagline}` %>">
+  <meta name="theme-color" content="#16324f">
+  <meta property="og:title" content="<%= title || shop.name %>">
+  <meta property="og:site_name" content="<%= shop.name %>">
+  <% if (locals.ogImage) { %><meta property="og:image" content="<%= ogImage %>"><% } %>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/site.css">
+  <script src="/js/early.js"></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">ข้ามไปยังเนื้อหา</a>
+  <header class="site-header">
+    <div class="container header-inner">
+      <a href="/" class="brand" aria-label="<%= shop.name %> หน้าแรก">
+        <span class="brand-mark"><%- icon('wrench') %></span>
+        <span class="brand-text">
+          <strong><%= shop.name %></strong>
+          <small>อะไหล่มือสองคัดสภาพ</small>
+        </span>
+      </a>
+      <form class="header-search" action="/products" method="get" role="search">
+        <%- icon('search') %>
+        <input type="search" name="q" placeholder="ค้นหาอะไหล่ ยี่ห้อ รุ่นรถ..." value="<%= locals.filters ? filters.q : '' %>" aria-label="ค้นหาสินค้า">
+      </form>
+      <nav class="header-nav" aria-label="เมนูหลัก">
+        <a href="/products" class="<%= currentPath.startsWith('/product') ? 'active' : '' %>">สินค้าทั้งหมด</a>
+        <a href="/#contact">ติดต่อร้าน</a>
+        <% if (shop.phone) { %>
+          <a class="btn btn-primary btn-sm header-call" href="<%= fmt.phoneHref(shop.phone) %>"><%- icon('phone') %><span>โทรหาร้าน</span></a>
+        <% } %>
+      </nav>
+    </div>
+  </header>
+  <main id="main">

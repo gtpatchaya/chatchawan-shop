@@ -1,0 +1,104 @@
+<%- include('partials/head') %>
+
+<section class="hero">
+  <div class="container hero-inner">
+    <div class="hero-copy">
+      <span class="eyebrow"><%- icon('store') %>ร้าน<%= shop.name %></span>
+      <h1>อะไหล่มือสองคุณภาพ<br><span>ราคาจับต้องได้</span></h1>
+      <p><%= shop.tagline %> ทุกชิ้นคัดสภาพและถ่ายภาพจากของจริง ดูรายละเอียดครบก่อนตัดสินใจ</p>
+      <form class="hero-search" action="/products" method="get" role="search">
+        <%- icon('search') %>
+        <input type="search" name="q" placeholder="เช่น ไดชาร์จ, ไฟหน้า Vios, กระจกมองข้าง" aria-label="ค้นหาสินค้า">
+        <button class="btn btn-primary" type="submit">ค้นหา</button>
+      </form>
+      <div class="hero-stats">
+        <div><strong><%= latest.total %></strong><span>รายการพร้อมขาย</span></div>
+        <div><strong><%= categories.length %></strong><span>หมวดหมู่</span></div>
+      </div>
+    </div>
+    <div class="hero-visual" aria-hidden="true">
+      <div class="hero-card hero-card-a"><%- icon('shield') %><span>ตรวจเช็คสภาพ<br>ก่อนลงขาย</span></div>
+      <div class="hero-card hero-card-b"><%- icon('camera') %><span>ภาพถ่าย<br>จากสินค้าจริง</span></div>
+      <div class="hero-card hero-card-c"><%- icon('chat') %><span>สอบถามได้<br>ก่อนซื้อ</span></div>
+      <div class="hero-ring"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section section-tight">
+  <div class="container">
+    <%- include('partials/category-chips', { categories, active: null, sortQs: '' }) %>
+  </div>
+</section>
+
+<% if (featured.length) { %>
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow"><%- icon('star') %>แนะนำจากร้าน</span>
+        <h2>สินค้าแนะนำ</h2>
+      </div>
+      <div class="rail-controls">
+        <button type="button" class="icon-btn" data-rail-prev aria-label="เลื่อนซ้าย"><%- icon('chevronLeft') %></button>
+        <button type="button" class="icon-btn" data-rail-next aria-label="เลื่อนขวา"><%- icon('chevronRight') %></button>
+      </div>
+    </div>
+    <div class="rail" data-rail>
+      <%- include('partials/product-cards', { products: featured }) %>
+    </div>
+  </div>
+</section>
+<% } %>
+
+<section class="section">
+  <div class="container">
+    <div class="section-head">
+      <div>
+        <span class="eyebrow"><%- icon('box') %>อัปเดตล่าสุด</span>
+        <h2>สินค้าเข้าใหม่</h2>
+      </div>
+      <a class="link-arrow" href="/products">ดูทั้งหมด <%- icon('arrowRight') %></a>
+    </div>
+    <%- include('partials/product-grid', { result: latest, query: '' }) %>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="trust-grid">
+      <div class="trust-item reveal">
+        <span class="trust-icon"><%- icon('shield') %></span>
+        <h3>คัดสภาพทุกชิ้น</h3>
+        <p>ระบุสภาพสินค้าชัดเจน ตั้งแต่เหมือนใหม่จนถึงขายเป็นซาก เลือกได้ตามงบ</p>
+      </div>
+      <div class="trust-item reveal">
+        <span class="trust-icon"><%- icon('camera') %></span>
+        <h3>ภาพจริงจากร้าน</h3>
+        <p>ถ่ายจากสินค้าชิ้นที่ขายจริง ขอดูภาพเพิ่มหรือวิดีโอได้ทาง LINE</p>
+      </div>
+      <div class="trust-item reveal">
+        <span class="trust-icon"><%- icon('store') %></span>
+        <h3>มีหน้าร้านจริง</h3>
+        <p>แวะมาดูของ ลองของ และรับสินค้าได้ที่ร้าน หรือสอบถามเรื่องการจัดส่ง</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container">
+    <div class="cta-band reveal">
+      <div>
+        <h2>หาอะไหล่ไม่เจอ?</h2>
+        <p>บอกรุ่นรถและชิ้นส่วนที่ต้องการ ทางร้านช่วยหาให้ เรามีสินค้าในร้านอีกมากที่ยังไม่ได้ลงเว็บ</p>
+      </div>
+      <div class="cta-actions">
+        <% if (shop.lineId) { %><a class="btn btn-line" href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener"><%- icon('chat') %>ทัก LINE</a><% } %>
+        <% if (shop.phone) { %><a class="btn btn-light" href="<%= fmt.phoneHref(shop.phone) %>"><%- icon('phone') %><%= shop.phone %></a><% } %>
+      </div>
+    </div>
+  </div>
+</section>
+
+<%- include('partials/foot') %>

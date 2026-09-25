@@ -1,0 +1,36 @@
+<!doctype html>
+<html lang="th">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex">
+  <title><%= title %> | หลังบ้าน <%= shop.name %></title>
+  <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Anuphan:wght@400;500;600;700&display=swap">
+  <link rel="stylesheet" href="/css/site.css">
+  <link rel="stylesheet" href="/css/admin.css">
+</head>
+<body class="admin">
+<% if (isAdmin) { %>
+  <header class="admin-bar">
+    <div class="container admin-bar-inner">
+      <a href="/admin" class="brand">
+        <span class="brand-mark"><%- icon('wrench') %></span>
+        <span class="brand-text"><strong><%= shop.name %></strong><small>ระบบหลังบ้าน</small></span>
+      </a>
+      <nav class="admin-nav">
+        <a href="/admin" class="<%= currentPath === '/admin' || currentPath.startsWith('/admin/products') ? 'active' : '' %>"><%- icon('box') %><span>สินค้า</span></a>
+        <a href="/admin/categories" class="<%= currentPath.startsWith('/admin/categories') ? 'active' : '' %>"><%- icon('folder') %><span>หมวดหมู่</span></a>
+        <a href="/" target="_blank" rel="noopener"><%- icon('eye') %><span>ดูหน้าร้าน</span></a>
+        <form action="/admin/logout" method="post"><button type="submit"><%- icon('logout') %><span>ออกจากระบบ</span></button></form>
+      </nav>
+    </div>
+  </header>
+<% } %>
+<main class="admin-main">
+  <div class="container">
+    <% if (flash) { %>
+      <div class="alert alert-<%= flash.type %>" role="status" data-dismissable><%- icon(flash.type === 'success' ? 'check' : 'close') %><span><%= flash.text %></span></div>
+    <% } %>

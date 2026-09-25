@@ -1,0 +1,25 @@
+{
+  "name": "chatchawan-chiangkong",
+  "version": "1.0.0",
+  "private": true,
+  "description": "เว็บไซต์ขายอะไหล่มือสอง ร้านชัชวาลเชียงกง (Express + Supabase)",
+  "main": "server.js",
+  "type": "commonjs",
+  "engines": {
+    "node": ">=18"
+  },
+  "scripts": {
+    "start": "node server.js",
+    "dev": "node --watch server.js"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.117.2",
+    "cookie-session": "^2.1.1",
+    "dotenv": "^18.0.3",
+    "ejs": "^6.0.1",
+    "express": "^5.2.1",
+    "helmet": "^8.3.0",
+    "multer": "^2.4.0",
+    "sharp": "^0.35.4"
+  }
+}
