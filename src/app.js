@@ -54,7 +54,8 @@ app.use(
 );
 
 // ค่าที่ทุกหน้าใช้ร่วมกัน
-app.use((req, res, next) => {
+app.use(async (req, res, next) => {
+  await settings.ensureLoaded();
   res.locals.shop = settings.get();
   res.locals.fmt = format;
   res.locals.icon = icon;

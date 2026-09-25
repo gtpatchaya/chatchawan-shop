@@ -26,6 +26,7 @@ function defaults() {
 }
 
 let cache = null;
+let loading = null;
 
 async function load() {
   try {
@@ -44,8 +45,15 @@ async function load() {
   return cache;
 }
 
+// โหลด cache ครั้งเดียว (ใช้บน serverless เช่น Vercel ที่ไม่ได้เรียก load() ตอนสตาร์ท)
+function ensureLoaded() {
+  if (cache) return Promise.resolve(cache);
+  if (!loading) loading = load().finally(() => { loading = null; });
+  return loading;
+}
+
 function get() {
   return cache || defaults();
 }
 
-module.exports = { load, get, KEYS };
+module.exports = { load, ensureLoaded, get, KEYS };
