@@ -6,9 +6,30 @@
   <title><%= title ? `${title} | ${shop.name}` : `${shop.name} - ${shop.tagline}` %></title>
   <meta name="description" content="<%= locals.metaDescription || `${shop.name} ${shop.tagline}` %>">
   <meta name="theme-color" content="#16324f">
-  <meta property="og:title" content="<%= title || shop.name %>">
+
+  <!-- Open Graph / Facebook -->
+  <meta property="og:type" content="<%= locals.ogType || 'website' %>">
   <meta property="og:site_name" content="<%= shop.name %>">
-  <% if (locals.ogImage) { %><meta property="og:image" content="<%= ogImage %>"><% } %>
+  <meta property="og:title" content="<%= locals.ogTitle || (title ? `${title} | ${shop.name}` : `${shop.name} - ${shop.tagline}`) %>">
+  <meta property="og:description" content="<%= locals.metaDescription || `${shop.name} ${shop.tagline}` %>">
+  <% if (locals.canonicalUrl) { %><meta property="og:url" content="<%= canonicalUrl %>"><% } %>
+  <% if (locals.ogImage) { %>
+    <meta property="og:image" content="<%= ogImage %>">
+    <meta property="og:image:secure_url" content="<%= ogImage %>">
+    <meta property="og:image:width" content="1200">
+    <meta property="og:image:height" content="630">
+    <meta property="og:image:alt" content="<%= locals.ogTitle || title || shop.name %>">
+  <% } %>
+  <% if (locals.productPrice != null && locals.productPrice > 0) { %>
+    <meta property="product:price:amount" content="<%= productPrice %>">
+    <meta property="product:price:currency" content="THB">
+  <% } %>
+
+  <!-- Twitter Card -->
+  <meta name="twitter:card" content="summary_large_image">
+  <meta name="twitter:title" content="<%= locals.ogTitle || (title ? `${title} | ${shop.name}` : `${shop.name} - ${shop.tagline}`) %>">
+  <meta name="twitter:description" content="<%= locals.metaDescription || `${shop.name} ${shop.tagline}` %>">
+  <% if (locals.ogImage) { %><meta name="twitter:image" content="<%= ogImage %>"><% } %>
   <link rel="icon" href="/img/favicon.svg" type="image/svg+xml">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>

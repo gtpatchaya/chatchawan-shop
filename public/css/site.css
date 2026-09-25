@@ -1478,6 +1478,110 @@ textarea {
   color: var(--green);
 }
 
+/* ---------- Share Actions ---------- */
+.detail-share {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 14px;
+  padding: 12px 16px;
+  background: var(--surface-2);
+  border: 1px solid var(--line);
+  border-radius: var(--radius);
+}
+
+.detail-share-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--ink-2);
+}
+
+.detail-share-label .icon {
+  width: 16px;
+  height: 16px;
+  color: var(--muted);
+}
+
+.detail-share-items {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-share {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  font-size: 0.85rem;
+  font-weight: 600;
+  border: 1px solid var(--line);
+  background: var(--surface);
+  color: var(--ink);
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  user-select: none;
+}
+
+.btn-share .icon {
+  width: 15px;
+  height: 15px;
+  transition: transform 0.2s ease;
+}
+
+.btn-share:hover {
+  transform: translateY(-1px);
+  box-shadow: var(--shadow-sm);
+}
+
+.btn-share:hover .icon {
+  transform: scale(1.1);
+}
+
+.btn-share-fb:hover {
+  background: #1877f2;
+  color: #ffffff;
+  border-color: #1877f2;
+}
+
+.btn-share-fb:hover .icon {
+  color: #ffffff;
+}
+
+.btn-share-line:hover {
+  background: #06c755;
+  color: #ffffff;
+  border-color: #06c755;
+}
+
+.btn-share-line:hover .icon {
+  color: #ffffff;
+}
+
+.btn-share-copy:hover {
+  background: var(--navy);
+  color: #ffffff;
+  border-color: var(--navy);
+}
+
+.btn-share-copy.copied {
+  background: #10b981;
+  color: #ffffff;
+  border-color: #10b981;
+}
+
+.btn-share-copy.copied .icon {
+  transform: scale(1.15);
+}
+
 .spec-list {
   display: grid;
   margin: 26px 0;

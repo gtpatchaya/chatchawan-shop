@@ -1,4 +1,4 @@
-<%- include('partials/head', { metaDescription: `${product.title} ราคา ${fmt.formatPrice(product.price)} ${product.compatible ? 'ใช้กับ ' + product.compatible : ''}`, ogImage: product.images[0] && product.images[0].url }) %>
+<%- include('partials/head') %>
 <%
   const discount = product.original_price && product.original_price > product.price && product.price > 0
     ? Math.round((1 - product.price / product.original_price) * 100) : 0;
@@ -72,6 +72,24 @@
           <% if (shop.lineId) { %><a class="btn btn-line btn-lg" href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener"><%- icon('chat') %>สอบถาม / สั่งซื้อทาง LINE</a><% } %>
           <% if (shop.phone) { %><a class="btn btn-outline btn-lg" href="<%= fmt.phoneHref(shop.phone) %>"><%- icon('phone') %>โทร <%= shop.phone %></a><% } %>
           <button type="button" class="btn btn-ghost btn-sm copy-btn" data-copy="<%= ask %>"><%- icon('tag') %>คัดลอกข้อความสอบถาม</button>
+        </div>
+
+        <div class="detail-share">
+          <span class="detail-share-label"><%- icon('share') %> แชร์สินค้า:</span>
+          <div class="detail-share-items">
+            <a class="btn-share btn-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(canonicalUrl) %>" target="_blank" rel="noopener noreferrer" title="แชร์ไปที่ Facebook" aria-label="แชร์ไปที่ Facebook">
+              <%- icon('facebook') %>
+              <span>Facebook</span>
+            </a>
+            <a class="btn-share btn-share-line" href="https://social-plugins.line.me/lineit/share?url=<%= encodeURIComponent(canonicalUrl) %>" target="_blank" rel="noopener noreferrer" title="แชร์ไปที่ LINE" aria-label="แชร์ไปที่ LINE">
+              <%- icon('chat') %>
+              <span>LINE</span>
+            </a>
+            <button type="button" class="btn-share btn-share-copy" data-copy-url="<%= canonicalUrl %>" title="คัดลอกลิงก์สินค้า" aria-label="คัดลอกลิงก์สินค้า">
+              <%- icon('link') %>
+              <span>คัดลอกลิงก์</span>
+            </button>
+          </div>
         </div>
 
         <dl class="spec-list">

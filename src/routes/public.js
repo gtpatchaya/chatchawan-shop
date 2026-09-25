@@ -77,6 +77,24 @@ router.get('/api/products', async (req, res, next) => {
   }
 });
 
+const og = require('../lib/og');
+const format = require('../lib/format');
+
+// Dynamic Open Graph Image สำหรับแสดงรูปพรีวิวพร้อมราคาตอนแชร์ลง Facebook / LINE
+router.get(['/api/og/product/:id.png', '/api/og/product/:id'], async (req, res, next) => {
+  try {
+    const product = await db.getProduct(req.params.id);
+    if (!product) return res.status(404).send('Product not found');
+
+    const imageBuffer = await og.generateProductCard(product, res.locals.shop);
+    res.setHeader('Content-Type', 'image/png');
+    res.setHeader('Cache-Control', 'public, max-age=86400, s-maxage=604800, stale-while-revalidate=86400');
+    res.send(imageBuffer);
+  } catch (err) {
+    next(err);
+  }
+});
+
 router.get('/product/:id', async (req, res, next) => {
   try {
     const product = await db.getProduct(req.params.id);
@@ -86,7 +104,23 @@ router.get('/product/:id', async (req, res, next) => {
       excludeId: product.id,
       pageSize: 8,
     });
-    res.render('product', { title: product.title, product, related: related.items });
+
+    const baseUrl = res.locals.baseUrl || '';
+    const priceText = product.price > 0 ? format.formatPrice(product.price) : 'ติดต่อสอบถามราคา';
+    const ogTitle = `${product.title} (${priceText}) | ${res.locals.shop.name}`;
+    const ogImage = `${baseUrl}/api/og/product/${product.id}.png`;
+    const metaDescription = `${product.title} ราคา ${priceText} ${product.compatible ? 'ใช้กับ ' + product.compatible : ''} สภาพ ${format.CONDITIONS[product.condition] || 'มือสอง'} - ร้าน ${res.locals.shop.name} ${res.locals.shop.tagline || ''}`.trim();
+
+    res.render('product', {
+      title: product.title,
+      ogTitle,
+      metaDescription,
+      ogImage,
+      ogType: 'product',
+      productPrice: product.price,
+      product,
+      related: related.items,
+    });
   } catch (err) {
     next(err);
   }

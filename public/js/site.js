@@ -174,6 +174,59 @@
     });
   });
 
+  // Copy product page URL
+  document.querySelectorAll('[data-copy-url]').forEach(function (btn) {
+    btn.addEventListener('click', function (e) {
+      e.preventDefault();
+      var url = btn.dataset.copyUrl || window.location.href;
+      function onCopied() {
+        var span = btn.querySelector('span');
+        var originalText = span ? span.textContent : btn.textContent;
+        btn.classList.add('copied');
+        if (span) span.textContent = 'คัดลอกลิงก์แล้ว!';
+        setTimeout(function () {
+          btn.classList.remove('copied');
+          if (span) span.textContent = originalText;
+        }, 2500);
+      }
+
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(url).then(onCopied).catch(function () {
+          fallbackCopy(url);
+          onCopied();
+        });
+      } else {
+        fallbackCopy(url);
+        onCopied();
+      }
+    });
+  });
+
+  function fallbackCopy(text) {
+    var ta = document.createElement('textarea');
+    ta.value = text;
+    ta.style.position = 'fixed';
+    ta.style.opacity = '0';
+    document.body.appendChild(ta);
+    ta.select();
+    try { document.execCommand('copy'); } catch (err) {}
+    document.body.removeChild(ta);
+  }
+
+  // Open share window popups for Facebook & LINE on desktop
+  document.querySelectorAll('.btn-share-fb, .btn-share-line').forEach(function (link) {
+    link.addEventListener('click', function (e) {
+      if (window.innerWidth > 640) {
+        e.preventDefault();
+        var w = 620;
+        var h = 560;
+        var left = Math.max(0, (window.screen.width - w) / 2);
+        var top = Math.max(0, (window.screen.height - h) / 2);
+        window.open(link.href, 'share-window', 'width=' + w + ',height=' + h + ',top=' + top + ',left=' + left + ',toolbar=0,menubar=0,location=0,status=0,scrollbars=1,resizable=1');
+      }
+    });
+  });
+
   // Submit sort form on change
   document.querySelectorAll('form[data-auto-submit] select').forEach(function (select) {
     select.addEventListener('change', function () { select.form.submit(); });

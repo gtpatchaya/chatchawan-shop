@@ -56,10 +56,16 @@ app.use(
 // ค่าที่ทุกหน้าใช้ร่วมกัน
 app.use(async (req, res, next) => {
   await settings.ensureLoaded();
+  const host = req.get('host') || 'chatchawanshop.com';
+  const proto = req.headers['x-forwarded-proto'] || (req.secure ? 'https' : 'http');
+  const baseUrl = `${proto}://${host}`;
+
   res.locals.shop = settings.get();
   res.locals.fmt = format;
   res.locals.icon = icon;
   res.locals.currentPath = req.path;
+  res.locals.baseUrl = baseUrl;
+  res.locals.canonicalUrl = `${baseUrl}${req.originalUrl.split('?')[0]}`;
   res.locals.isAdmin = Boolean(req.session && req.session.isAdmin);
   res.locals.flash = req.session.flash || null;
   if (req.session.flash) req.session.flash = null;
