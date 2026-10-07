@@ -12,7 +12,7 @@
   <meta property="og:site_name" content="<%= shop.name %>">
   <meta property="og:title" content="<%= locals.ogTitle || (title ? `${title} | ${shop.name}` : `${shop.name} - ${shop.tagline}`) %>">
   <meta property="og:description" content="<%= locals.metaDescription || `${shop.name} ${shop.tagline}` %>">
-  <% if (locals.canonicalUrl) { %><meta property="og:url" content="<%= canonicalUrl %>"><% } %>
+  <% if (locals.shareUrl || locals.canonicalUrl) { %><meta property="og:url" content="<%= locals.shareUrl || canonicalUrl %>"><% } %>
   <% if (locals.ogImage) { %>
     <meta property="og:image" content="<%= ogImage %>">
     <meta property="og:image:secure_url" content="<%= ogImage %>">

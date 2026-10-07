@@ -91,7 +91,13 @@ router.get('/product/:id', async (req, res, next) => {
 
     const priceText = product.price > 0 ? format.formatPrice(product.price) : 'ติดต่อสอบถามราคา';
     const ogTitle = `${product.title} (${priceText}) | ${res.locals.shop.name}`;
-    const ogImage = (product.images && product.images[0] && product.images[0].url) || '';
+    const cover = product.images && product.images[0];
+    const ogImage = (cover && cover.url) || '';
+    // Facebook จำภาพตัวอย่างของแต่ละลิงก์ไว้นาน จึงใส่ ?v=<รหัสรูปปก> ให้ลิงก์แชร์เปลี่ยนตามรูปปก
+    // เมื่อเปลี่ยนรูปปก Facebook จะเห็นเป็นลิงก์ใหม่และดึงรูปใหม่ทันที
+    const shareUrl = cover
+      ? `${res.locals.canonicalUrl}?v=${String(cover.id).replace(/-/g, '').slice(0, 8)}`
+      : res.locals.canonicalUrl;
     const metaDescription = `${product.title} ราคา ${priceText} ${product.compatible ? 'ใช้กับ ' + product.compatible : ''} สภาพ ${format.CONDITIONS[product.condition] || 'มือสอง'} - ร้าน ${res.locals.shop.name} ${res.locals.shop.tagline || ''}`.trim();
 
     res.render('product', {
@@ -99,6 +105,7 @@ router.get('/product/:id', async (req, res, next) => {
       ogTitle,
       metaDescription,
       ogImage,
+      shareUrl,
       ogType: 'product',
       productPrice: product.price,
       product,

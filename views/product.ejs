@@ -77,15 +77,15 @@
         <div class="detail-share">
           <span class="detail-share-label"><%- icon('share') %> แชร์สินค้า:</span>
           <div class="detail-share-items">
-            <a class="btn-share btn-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(canonicalUrl) %>" target="_blank" rel="noopener noreferrer" title="แชร์ไปที่ Facebook" aria-label="แชร์ไปที่ Facebook">
+            <a class="btn-share btn-share-fb" href="https://www.facebook.com/sharer/sharer.php?u=<%= encodeURIComponent(shareUrl) %>" target="_blank" rel="noopener noreferrer" title="แชร์ไปที่ Facebook" aria-label="แชร์ไปที่ Facebook">
               <%- icon('facebook') %>
               <span>Facebook</span>
             </a>
-            <a class="btn-share btn-share-line" href="https://social-plugins.line.me/lineit/share?url=<%= encodeURIComponent(canonicalUrl) %>" target="_blank" rel="noopener noreferrer" title="แชร์ไปที่ LINE" aria-label="แชร์ไปที่ LINE">
+            <a class="btn-share btn-share-line" href="https://social-plugins.line.me/lineit/share?url=<%= encodeURIComponent(shareUrl) %>" target="_blank" rel="noopener noreferrer" title="แชร์ไปที่ LINE" aria-label="แชร์ไปที่ LINE">
               <%- icon('chat') %>
               <span>LINE</span>
             </a>
-            <button type="button" class="btn-share btn-share-copy" data-copy-url="<%= canonicalUrl %>" title="คัดลอกลิงก์สินค้า" aria-label="คัดลอกลิงก์สินค้า">
+            <button type="button" class="btn-share btn-share-copy" data-copy-url="<%= shareUrl %>" title="คัดลอกลิงก์สินค้า" aria-label="คัดลอกลิงก์สินค้า">
               <%- icon('link') %>
               <span>คัดลอกลิงก์</span>
             </button>
