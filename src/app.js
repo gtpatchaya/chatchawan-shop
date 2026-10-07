@@ -84,7 +84,7 @@ app.use((err, req, res, next) => {
   console.error(err);
   const message =
     err.code === 'LIMIT_FILE_SIZE'
-      ? 'ไฟล์รูปใหญ่เกินไป (สูงสุด 10MB ต่อรูป)'
+      ? 'ไฟล์รูปใหญ่เกินไป กรุณาลองอัปโหลดทีละน้อยรูป'
       : config.isProd
         ? 'ระบบขัดข้องชั่วคราว กรุณาลองใหม่อีกครั้ง'
         : err.message;

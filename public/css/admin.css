@@ -689,3 +689,21 @@
     flex: 1 1 100%;
   }
 }
+
+.size-tag {
+  position: absolute;
+  left: 6px;
+  bottom: 6px;
+  background: rgba(255, 255, 255, 0.92);
+}
+
+.image-tile-busy {
+  display: grid;
+  place-items: center;
+  padding: 8px;
+  text-align: center;
+  font-size: 0.8rem;
+  color: var(--muted);
+  border: 2px dashed var(--line);
+  background: #fcfbf9;
+}
