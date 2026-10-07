@@ -3,7 +3,8 @@ const multer = require('multer');
 const db = require('../lib/db');
 const auth = require('../lib/auth');
 const settings = require('../lib/settings');
-const { CONDITIONS, STATUSES, slugify } = require('../lib/format');
+const facebook = require('../lib/facebook');
+const { CONDITIONS, STATUSES, slugify, shareVersion } = require('../lib/format');
 
 const router = express.Router();
 
@@ -24,6 +25,22 @@ router.use((req, res, next) => {
 
 function flash(req, type, text) {
   req.session.flash = { type, text };
+}
+
+// ให้ Facebook ดึงรูปปกใหม่ของหน้าสินค้า ทั้งลิงก์ปกติและลิงก์แชร์ (?v=) ของรูปปกปัจจุบัน
+async function refreshProductShare(res, productId) {
+  const product = await db.getProduct(productId, { admin: true });
+  if (!product) return;
+  const url = `${res.locals.baseUrl}/product/${product.id}`;
+  const cover = product.images[0];
+  await facebook.rescrape([url, cover && `${url}?v=${shareVersion(cover.id)}`]);
+}
+
+// ให้ Facebook ดึงรูปหน้าปกร้านใหม่สำหรับหน้าแรก
+async function refreshHomeShare(res) {
+  const base = res.locals.baseUrl;
+  const hero = settings.get().heroImageUrl;
+  await facebook.rescrape([`${base}/`, hero && `${base}/?v=${shareVersion(hero)}`]);
 }
 
 function safeNext(value) {
@@ -178,6 +195,7 @@ router.post('/products/:id', upload.array('images', 12), async (req, res, next) 
     }
     await db.updateProduct(product.id, fields);
     await db.addImages(product.id, req.files);
+    await refreshProductShare(res, product.id);
     flash(req, 'success', 'บันทึกการแก้ไขแล้ว');
     res.redirect(`/admin/products/${product.id}/edit`);
   } catch (err) {
@@ -213,6 +231,7 @@ router.post('/products/:id/delete', async (req, res, next) => {
 router.post('/images/:id/delete', async (req, res, next) => {
   try {
     const image = await db.deleteImage(req.params.id);
+    if (image) await refreshProductShare(res, image.product_id);
     flash(req, 'success', 'ลบรูปแล้ว');
     res.redirect(image ? `/admin/products/${image.product_id}/edit` : '/admin');
   } catch (err) {
@@ -223,6 +242,7 @@ router.post('/images/:id/delete', async (req, res, next) => {
 router.post('/images/:id/cover', async (req, res, next) => {
   try {
     const image = await db.setCoverImage(req.params.id);
+    if (image) await refreshProductShare(res, image.product_id);
     flash(req, 'success', 'ตั้งเป็นรูปหน้าปกแล้ว');
     res.redirect(image ? `/admin/products/${image.product_id}/edit` : '/admin');
   } catch (err) {
@@ -266,6 +286,7 @@ router.post('/settings', upload.single('hero_image'), async (req, res, next) => 
 
     await db.saveSettings(entries);
     await settings.load();
+    if (req.file) await refreshHomeShare(res);
     flash(req, 'success', req.file ? 'บันทึกรูปพื้นหลังแล้ว' : 'บันทึกการตั้งค่าร้านแล้ว');
     res.redirect('/admin/settings');
   } catch (err) {
@@ -279,6 +300,7 @@ router.post('/settings/hero/delete', async (req, res, next) => {
     if (current.heroImagePath) await db.removeStoredImage(current.heroImagePath);
     await db.saveSettings({ hero_image_url: '', hero_image_path: '' });
     await settings.load();
+    await refreshHomeShare(res);
     flash(req, 'success', 'ลบรูปพื้นหลังแล้ว');
     res.redirect('/admin/settings');
   } catch (err) {

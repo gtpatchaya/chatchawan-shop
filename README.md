@@ -30,6 +30,7 @@
    - `SUPABASE_URL` และ `SUPABASE_SERVICE_ROLE_KEY` ดูได้ที่ Project Settings > API
    - `ADMIN_PASSWORD` รหัสผ่านเข้าหลังบ้าน
    - `SESSION_SECRET` ข้อความสุ่มยาวๆ
+   - `FACEBOOK_APP_ID` และ `FACEBOOK_APP_SECRET` (ไม่บังคับ) ถ้าใส่ไว้ เมื่อเปลี่ยนรูปปกสินค้าหรือรูปหน้าปกร้าน ระบบจะสั่ง Facebook ให้ดึงรูปใหม่ทันที สร้าง app ฟรีได้ที่ https://developers.facebook.com/apps
    - เบอร์โทร, LINE, ที่อยู่ร้าน, ลิงก์แผนที่
 4. ติดตั้งและรัน
    ```bash

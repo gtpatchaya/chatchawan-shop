@@ -22,4 +22,8 @@ module.exports = {
     password: env.ADMIN_PASSWORD || '',
     sessionSecret: env.SESSION_SECRET || '',
   },
+  facebook: {
+    appId: env.FACEBOOK_APP_ID || '',
+    appSecret: env.FACEBOOK_APP_SECRET || '',
+  },
 };

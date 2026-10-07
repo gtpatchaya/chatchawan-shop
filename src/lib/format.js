@@ -48,4 +48,10 @@ function slugify(text) {
     .replace(/^-+|-+$/g, '');
 }
 
-module.exports = { CONDITIONS, STATUSES, formatPrice, formatDate, phoneHref, lineHref, slugify };
+// รหัสสั้นๆ ที่เปลี่ยนตามรูป ใช้ต่อท้ายลิงก์แชร์ (?v=) ให้ Facebook ดึงรูปใหม่เมื่อรูปเปลี่ยน
+function shareVersion(value) {
+  if (!value) return '';
+  return require('crypto').createHash('sha1').update(String(value)).digest('hex').slice(0, 8);
+}
+
+module.exports = { CONDITIONS, STATUSES, formatPrice, formatDate, phoneHref, lineHref, slugify, shareVersion };
