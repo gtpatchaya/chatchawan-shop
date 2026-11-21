@@ -78,6 +78,12 @@
       <textarea name="description" rows="6" maxlength="5000" placeholder="บอกสภาพ ตำหนิ ที่มา การรับประกัน หรือข้อมูลที่ลูกค้าควรรู้"><%= product.description || '' %></textarea>
     </label>
 
+    <label class="field">
+      <span>ลิงก์ซื้อสินค้า (Affiliate)</span>
+      <input type="url" name="affiliate_url" value="<%= product.affiliate_url || '' %>" maxlength="1000" inputmode="url" placeholder="เช่น https://s.shopee.co.th/... หรือลิงก์ Lazada / TikTok">
+      <small class="muted">ถ้าใส่ลิงก์นี้ หน้าเว็บจะแสดงปุ่ม "ซื้อเลย" ให้ลูกค้ากดไปซื้อที่ร้านนั้นโดยตรง (แทนปุ่ม LINE/โทร) — ต้องขึ้นต้นด้วย http:// หรือ https://</small>
+    </label>
+
     <div class="toggles">
       <label class="toggle"><input type="checkbox" name="is_published" <%= product.is_published ? 'checked' : '' %>><span class="toggle-ui"></span><span>แสดงบนหน้าเว็บ</span></label>
       <label class="toggle"><input type="checkbox" name="is_featured" <%= product.is_featured ? 'checked' : '' %>><span class="toggle-ui"></span><span>ปักหมุดเป็นสินค้าแนะนำ</span></label>

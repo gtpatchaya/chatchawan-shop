@@ -1,25 +1,31 @@
 <% const cover = product.images && product.images[0]; %>
-<a class="product-card reveal" href="/product/<%= product.id %>">
-  <div class="product-thumb">
-    <% if (cover) { %>
-      <img src="<%= cover.url %>" alt="<%= product.title %>" loading="lazy" decoding="async">
-    <% } else { %>
-      <div class="thumb-empty"><%- icon('image') %></div>
-    <% } %>
-    <% if (product.status !== 'available') { %>
-      <span class="badge badge-<%= product.status %>"><%= fmt.STATUSES[product.status] %></span>
-    <% } %>
-    <% if (product.images && product.images.length > 1) { %>
-      <span class="photo-count"><%- icon('camera') %><%= product.images.length %></span>
-    <% } %>
-  </div>
-  <div class="product-body">
-    <span class="product-meta"><%= product.category ? product.category.name : 'อะไหล่' %><% if (product.brand) { %> · <%= product.brand %><% } %></span>
-    <h3 class="product-title"><%= product.title %></h3>
-    <% if (product.compatible) { %><p class="product-compat">ใช้กับ <%= product.compatible %></p><% } %>
-    <div class="product-foot">
-      <span class="price"><%= fmt.formatPrice(product.price) %></span>
-      <span class="condition condition-<%= product.condition %>"><%= fmt.CONDITIONS[product.condition] %></span>
+<% const canBuy = product.affiliate_url && product.status === 'available'; %>
+<article class="product-card reveal">
+  <a class="product-card-link" href="/product/<%= product.id %>">
+    <div class="product-thumb">
+      <% if (cover) { %>
+        <img src="<%= cover.url %>" alt="<%= product.title %>" loading="lazy" decoding="async">
+      <% } else { %>
+        <div class="thumb-empty"><%- icon('image') %></div>
+      <% } %>
+      <% if (product.status !== 'available') { %>
+        <span class="badge badge-<%= product.status %>"><%= fmt.STATUSES[product.status] %></span>
+      <% } %>
+      <% if (product.images && product.images.length > 1) { %>
+        <span class="photo-count"><%- icon('camera') %><%= product.images.length %></span>
+      <% } %>
     </div>
-  </div>
-</a>
+    <div class="product-body">
+      <span class="product-meta"><%= product.category ? product.category.name : 'อะไหล่' %><% if (product.brand) { %> · <%= product.brand %><% } %></span>
+      <h3 class="product-title"><%= product.title %></h3>
+      <% if (product.compatible) { %><p class="product-compat">ใช้กับ <%= product.compatible %></p><% } %>
+      <div class="product-foot">
+        <span class="price"><%= fmt.formatPrice(product.price) %></span>
+        <span class="condition condition-<%= product.condition %>"><%= fmt.CONDITIONS[product.condition] %></span>
+      </div>
+    </div>
+  </a>
+  <% if (canBuy) { %>
+    <a class="btn btn-primary btn-sm btn-block product-card-buy" href="<%= product.affiliate_url %>" target="_blank" rel="noopener nofollow sponsored"><%- icon('cart') %>ซื้อเลย</a>
+  <% } %>
+</article>

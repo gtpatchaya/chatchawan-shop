@@ -3,6 +3,8 @@
   const discount = product.original_price && product.original_price > product.price && product.price > 0
     ? Math.round((1 - product.price / product.original_price) * 100) : 0;
   const ask = `สนใจสินค้า: ${product.title} (${fmt.formatPrice(product.price)})`;
+  // มีลิงก์ affiliate และยังพร้อมขาย -> แสดงปุ่ม "ซื้อเลย" อย่างเดียว (ซ่อน LINE/โทร)
+  const hasBuy = product.affiliate_url && product.status === 'available';
 %>
 <section class="section section-top">
   <div class="container">
@@ -69,9 +71,13 @@
         <% } %>
 
         <div class="detail-actions">
-          <% if (shop.lineId) { %><a class="btn btn-line btn-lg" href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener"><%- icon('chat') %>สอบถาม / สั่งซื้อทาง LINE</a><% } %>
-          <% if (shop.phone) { %><a class="btn btn-outline btn-lg" href="<%= fmt.phoneHref(shop.phone) %>"><%- icon('phone') %>โทร <%= shop.phone %></a><% } %>
-          <button type="button" class="btn btn-ghost btn-sm copy-btn" data-copy="<%= ask %>"><%- icon('tag') %>คัดลอกข้อความสอบถาม</button>
+          <% if (hasBuy) { %>
+            <a class="btn btn-primary btn-lg" href="<%= product.affiliate_url %>" target="_blank" rel="noopener nofollow sponsored"><%- icon('cart') %>ซื้อเลย</a>
+          <% } else { %>
+            <% if (shop.lineId) { %><a class="btn btn-line btn-lg" href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener"><%- icon('chat') %>สอบถาม / สั่งซื้อทาง LINE</a><% } %>
+            <% if (shop.phone) { %><a class="btn btn-outline btn-lg" href="<%= fmt.phoneHref(shop.phone) %>"><%- icon('phone') %>โทร <%= shop.phone %></a><% } %>
+            <button type="button" class="btn btn-ghost btn-sm copy-btn" data-copy="<%= ask %>"><%- icon('tag') %>คัดลอกข้อความสอบถาม</button>
+          <% } %>
         </div>
 
         <div class="detail-share">
@@ -129,7 +135,11 @@
 
 <div class="mobile-buybar">
   <div><small>ราคา</small><strong><%= fmt.formatPrice(product.price) %></strong></div>
-  <% if (shop.phone) { %><a class="icon-btn icon-btn-lg" href="<%= fmt.phoneHref(shop.phone) %>" aria-label="โทรหาร้าน"><%- icon('phone') %></a><% } %>
-  <% if (shop.lineId) { %><a class="btn btn-line" href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener"><%- icon('chat') %>ทัก LINE</a><% } %>
+  <% if (hasBuy) { %>
+    <a class="btn btn-primary" href="<%= product.affiliate_url %>" target="_blank" rel="noopener nofollow sponsored"><%- icon('cart') %>ซื้อเลย</a>
+  <% } else { %>
+    <% if (shop.phone) { %><a class="icon-btn icon-btn-lg" href="<%= fmt.phoneHref(shop.phone) %>" aria-label="โทรหาร้าน"><%- icon('phone') %></a><% } %>
+    <% if (shop.lineId) { %><a class="btn btn-line" href="<%= fmt.lineHref(shop.lineId) %>" target="_blank" rel="noopener"><%- icon('chat') %>ทัก LINE</a><% } %>
+  <% } %>
 </div>
 <%- include('partials/foot') %>

@@ -109,6 +109,11 @@ function readProductForm(body) {
     const n = parseFloat(String(v || '').replace(/,/g, ''));
     return Number.isFinite(n) && n >= 0 ? n : null;
   };
+  // รับเฉพาะลิงก์ http/https เท่านั้น (กันใส่ค่าแปลกปลอม / javascript:)
+  const toUrl = (v) => {
+    const s = String(v || '').trim().slice(0, 1000);
+    return /^https?:\/\//i.test(s) ? s : '';
+  };
   return {
     title: String(body.title || '').trim().slice(0, 200),
     description: String(body.description || '').trim().slice(0, 5000),
@@ -118,6 +123,7 @@ function readProductForm(body) {
     brand: String(body.brand || '').trim().slice(0, 100),
     compatible: String(body.compatible || '').trim().slice(0, 300),
     part_number: String(body.part_number || '').trim().slice(0, 100),
+    affiliate_url: toUrl(body.affiliate_url),
     condition: Object.keys(CONDITIONS).includes(body.condition) ? body.condition : 'good',
     quantity: Math.max(0, parseInt(body.quantity, 10) || 0),
     status: Object.keys(STATUSES).includes(body.status) ? body.status : 'available',

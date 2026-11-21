@@ -24,6 +24,7 @@ create table if not exists public.products (
   brand           text not null default '',
   compatible      text not null default '',   -- ใช้กับรุ่นรถ
   part_number     text not null default '',
+  affiliate_url   text not null default '',   -- ลิงก์ซื้อสินค้าภายนอก (Shopee/Lazada/TikTok ฯลฯ) ถ้ามี จะแสดงปุ่ม "ซื้อเลย"
   condition       text not null default 'good', -- like_new | good | fair | for_parts
   quantity        int  not null default 1,
   status          text not null default 'available', -- available | reserved | sold
@@ -32,6 +33,9 @@ create table if not exists public.products (
   created_at      timestamptz not null default now(),
   updated_at      timestamptz not null default now()
 );
+
+-- เผื่อตารางถูกสร้างไว้ก่อนมีคอลัมน์ affiliate_url (รันซ้ำได้ ไม่พัง)
+alter table public.products add column if not exists affiliate_url text not null default '';
 
 create index if not exists products_category_idx on public.products(category_id);
 create index if not exists products_created_idx  on public.products(created_at desc);

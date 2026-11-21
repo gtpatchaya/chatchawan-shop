@@ -814,6 +814,7 @@ textarea {
 }
 
 .product-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   background: var(--surface);
@@ -828,6 +829,22 @@ textarea {
 .product-card:hover {
   transform: translateY(-4px);
   box-shadow: var(--shadow);
+}
+
+/* ลิงก์หลักของการ์ด (คลุมทั้งรูป + รายละเอียด) */
+.product-card-link {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  color: inherit;
+  text-decoration: none;
+}
+
+/* ปุ่ม "ซื้อเลย" ลอยอยู่เหนือลิงก์หลัก กดแยกไปลิงก์ affiliate ได้ */
+.product-card-buy {
+  position: relative;
+  z-index: 2;
+  margin: 0 14px 14px;
 }
 
 .product-thumb {
