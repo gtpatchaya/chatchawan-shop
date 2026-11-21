@@ -840,11 +840,13 @@ textarea {
   text-decoration: none;
 }
 
-/* ปุ่ม "ซื้อเลย" ลอยอยู่เหนือลิงก์หลัก กดแยกไปลิงก์ affiliate ได้ */
+/* ปุ่ม "ซื้อเลย" เป็นแถบเต็มความกว้างเชื่อมติดขอบล่างการ์ด (มุมโค้งตามการ์ดเอง) */
 .product-card-buy {
   position: relative;
   z-index: 2;
-  margin: 0 14px 14px;
+  margin: 0;
+  border-radius: 0;
+  min-height: 48px;
 }
 
 .product-thumb {
