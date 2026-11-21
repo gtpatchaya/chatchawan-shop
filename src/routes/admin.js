@@ -298,8 +298,8 @@ router.post('/settings', settingsUpload, async (req, res, next) => {
       if (current.heroImagePath) await db.removeStoredImage(current.heroImagePath);
     }
     if (shareFile) {
-      // crop เป็น 1200x630 ให้พอดีการ์ดแชร์ Facebook/LINE เสมอ
-      const img = await db.uploadImage(shareFile, { folder: 'settings', width: 1200, height: 630, fit: 'cover', enlarge: true });
+      // วางรูปทั้งใบลงกรอบ 1200x630 ให้พอดีการ์ดแชร์ Facebook/LINE โดยไม่ครอปขาด เติมพื้นหลังขาวในส่วนที่เหลือ
+      const img = await db.uploadImage(shareFile, { folder: 'settings', width: 1200, height: 630, fit: 'contain', enlarge: true, background: '#ffffff' });
       entries.share_image_url = img.url;
       entries.share_image_path = img.path;
       if (current.shareImagePath) await db.removeStoredImage(current.shareImagePath);
