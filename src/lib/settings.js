@@ -15,6 +15,8 @@ const KEYS = {
   openHours: 'shop_open_hours',
   heroImageUrl: 'hero_image_url',
   heroImagePath: 'hero_image_path',
+  shareImageUrl: 'share_image_url',
+  shareImagePath: 'share_image_path',
 };
 
 function defaults() {
@@ -22,6 +24,8 @@ function defaults() {
     ...config.shop, // name, tagline, phone, lineId, facebookUrl, address, mapUrl, openHours
     heroImageUrl: '',
     heroImagePath: '',
+    shareImageUrl: '',
+    shareImagePath: '',
   };
 }
 

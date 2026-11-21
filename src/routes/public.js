@@ -21,10 +21,10 @@ router.get('/', async (req, res, next) => {
       db.listProducts({ featured: true, pageSize: 8 }),
       db.listProducts({ pageSize: PAGE_SIZE }),
     ]);
-    // รูปตอนแชร์หน้าแรก = รูปหน้าปกร้าน (ถ้ายังไม่ได้ตั้ง ใช้รูปสินค้าล่าสุดแทน)
+    // รูปตอนแชร์หน้าแรก = รูปแชร์เฉพาะ > รูปหน้าปกร้าน > รูปสินค้าล่าสุด
     const shop = res.locals.shop;
     const firstProductImage = latest.items.map((p) => p.images && p.images[0]).find(Boolean);
-    const ogImage = shop.heroImageUrl || (firstProductImage && firstProductImage.url) || '';
+    const ogImage = shop.shareImageUrl || shop.heroImageUrl || (firstProductImage && firstProductImage.url) || '';
     const shareUrl = ogImage
       ? `${res.locals.baseUrl}/?v=${format.shareVersion(ogImage)}`
       : res.locals.canonicalUrl;

@@ -84,6 +84,32 @@
         <button class="btn btn-primary btn-sm" type="submit"><%- icon('upload') %><%= shopSettings.heroImageUrl ? 'เปลี่ยนรูปพื้นหลัง' : 'อัปโหลดรูปพื้นหลัง' %></button>
       </form>
     </div>
+
+    <div class="card">
+      <h2 class="card-title">รูปสำหรับแชร์ (Facebook / LINE)</h2>
+      <p class="muted small">รูปที่โชว์ตอนแชร์ลิงก์หน้าแรก แนะนำภาพแนวนอน เช่น ป้ายร้าน/โลโก้ + ชื่อร้าน ระบบจะครอบเป็นขนาด 1200×630 ให้พอดีการ์ดแชร์ ถ้าไม่ตั้ง จะใช้รูปพื้นหลังหน้าแรกแทน</p>
+      <% if (shopSettings.shareImageUrl) { %>
+        <div class="image-tile settings-hero-preview">
+          <img src="<%= shopSettings.shareImageUrl %>" alt="รูปแชร์ปัจจุบัน" loading="lazy">
+        </div>
+        <form method="post" action="/admin/settings/share/delete" data-confirm="ลบรูปแชร์?">
+          <button type="submit" class="btn btn-danger btn-sm"><%- icon('trash') %>ลบรูปแชร์</button>
+        </form>
+      <% } else { %>
+        <p class="muted">ยังไม่มีรูปแชร์เฉพาะ ตอนนี้ใช้รูปพื้นหลังหน้าแรกเป็นรูปแชร์</p>
+      <% } %>
+
+      <form method="post" action="/admin/settings" enctype="multipart/form-data" class="settings-hero-upload">
+        <label class="dropzone" data-dropzone>
+          <input type="file" name="share_image" accept="image/*" data-file-input>
+          <%- icon('upload', 'icon icon-xl') %>
+          <strong>แตะเพื่อเลือกรูป หรือลากรูปมาวาง</strong>
+          <span class="muted">แนะนำภาพแนวนอน 1200×630 ระบบจะครอบและย่อขนาดให้อัตโนมัติ</span>
+        </label>
+        <div class="preview-grid" data-preview></div>
+        <button class="btn btn-primary btn-sm" type="submit"><%- icon('upload') %><%= shopSettings.shareImageUrl ? 'เปลี่ยนรูปแชร์' : 'อัปโหลดรูปแชร์' %></button>
+      </form>
+    </div>
   </aside>
 </div>
 <%- include('foot') %>

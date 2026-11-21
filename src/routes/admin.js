@@ -36,11 +36,12 @@ async function refreshProductShare(res, productId) {
   await facebook.rescrape([url, cover && `${url}?v=${shareVersion(cover.id)}`]);
 }
 
-// ให้ Facebook ดึงรูปหน้าปกร้านใหม่สำหรับหน้าแรก
+// ให้ Facebook ดึงรูปแชร์ใหม่สำหรับหน้าแรก (ใช้รูปแชร์ก่อน ถ้าไม่มีค่อยใช้รูปหน้าปก)
 async function refreshHomeShare(res) {
   const base = res.locals.baseUrl;
-  const hero = settings.get().heroImageUrl;
-  await facebook.rescrape([`${base}/`, hero && `${base}/?v=${shareVersion(hero)}`]);
+  const s = settings.get();
+  const img = s.shareImageUrl || s.heroImageUrl;
+  await facebook.rescrape([`${base}/`, img && `${base}/?v=${shareVersion(img)}`]);
 }
 
 function safeNext(value) {
@@ -262,9 +263,16 @@ router.get('/settings', (req, res) => {
   res.render('admin/settings', { title: 'ตั้งค่าร้าน', shopSettings: settings.get() });
 });
 
-router.post('/settings', upload.single('hero_image'), async (req, res, next) => {
+const settingsUpload = upload.fields([
+  { name: 'hero_image', maxCount: 1 },
+  { name: 'share_image', maxCount: 1 },
+]);
+
+router.post('/settings', settingsUpload, async (req, res, next) => {
   try {
     const b = req.body;
+    const heroFile = req.files && req.files.hero_image && req.files.hero_image[0];
+    const shareFile = req.files && req.files.share_image && req.files.share_image[0];
     const str = (v, max) => String(v || '').trim().slice(0, max);
     // อัปเดตเฉพาะฟิลด์ที่ฟอร์มส่งมาจริง (ฟอร์มอัปโหลดรูปจะไม่มีฟิลด์ข้อความ จึงไม่ถูกล้าง)
     const TEXT = [
@@ -282,18 +290,28 @@ router.post('/settings', upload.single('hero_image'), async (req, res, next) => 
       if (b[field] !== undefined) entries[key] = str(b[field], max);
     }
 
-    if (req.file) {
-      const current = settings.get();
-      const img = await db.uploadImage(req.file, { folder: 'settings', width: 1920 });
+    const current = settings.get();
+    if (heroFile) {
+      const img = await db.uploadImage(heroFile, { folder: 'settings', width: 1920 });
       entries.hero_image_url = img.url;
       entries.hero_image_path = img.path;
       if (current.heroImagePath) await db.removeStoredImage(current.heroImagePath);
     }
+    if (shareFile) {
+      // crop เป็น 1200x630 ให้พอดีการ์ดแชร์ Facebook/LINE เสมอ
+      const img = await db.uploadImage(shareFile, { folder: 'settings', width: 1200, height: 630, fit: 'cover', enlarge: true });
+      entries.share_image_url = img.url;
+      entries.share_image_path = img.path;
+      if (current.shareImagePath) await db.removeStoredImage(current.shareImagePath);
+    }
 
     await db.saveSettings(entries);
     await settings.load();
-    if (req.file) await refreshHomeShare(res);
-    flash(req, 'success', req.file ? 'บันทึกรูปพื้นหลังแล้ว' : 'บันทึกการตั้งค่าร้านแล้ว');
+    if (heroFile || shareFile) await refreshHomeShare(res);
+    let msg = 'บันทึกการตั้งค่าร้านแล้ว';
+    if (shareFile) msg = 'บันทึกรูปแชร์แล้ว';
+    else if (heroFile) msg = 'บันทึกรูปพื้นหลังแล้ว';
+    flash(req, 'success', msg);
     res.redirect('/admin/settings');
   } catch (err) {
     next(err);
@@ -308,6 +326,20 @@ router.post('/settings/hero/delete', async (req, res, next) => {
     await settings.load();
     await refreshHomeShare(res);
     flash(req, 'success', 'ลบรูปพื้นหลังแล้ว');
+    res.redirect('/admin/settings');
+  } catch (err) {
+    next(err);
+  }
+});
+
+router.post('/settings/share/delete', async (req, res, next) => {
+  try {
+    const current = settings.get();
+    if (current.shareImagePath) await db.removeStoredImage(current.shareImagePath);
+    await db.saveSettings({ share_image_url: '', share_image_path: '' });
+    await settings.load();
+    await refreshHomeShare(res);
+    flash(req, 'success', 'ลบรูปแชร์แล้ว');
     res.redirect('/admin/settings');
   } catch (err) {
     next(err);

@@ -158,11 +158,11 @@ async function saveSettings(entries) {
 /**
  * ย่อรูปแล้วอัปโหลดขึ้น storage คืน { path, url } ใช้กับรูปพื้นหลัง hero
  */
-async function uploadImage(file, { folder = 'misc', width = 1920 } = {}) {
+async function uploadImage(file, { folder = 'misc', width = 1920, height = width, fit = 'inside', enlarge = false } = {}) {
   const bucket = supabase().storage.from(config.supabase.bucket);
   const buffer = await sharp(file.buffer)
     .rotate()
-    .resize({ width, height: width, fit: 'inside', withoutEnlargement: true })
+    .resize({ width, height, fit, withoutEnlargement: !enlarge })
     .webp({ quality: 80 })
     .toBuffer();
 
